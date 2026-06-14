@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="Loom">
 <title>Loom</title>
 <script src="firebase-config.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,400&family=DM+Sans:wght@200;300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Plus+Jakarta+Sans:wght@200;300;400&family=Fraunces:ital,opsz,wght@0,9..144,300;1,9..144,300&family=DM+Sans:wght@200;300;400&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -33,8 +33,8 @@ html,body{min-height:100%;background:var(--ivory);color:var(--text);font-family:
 .cd-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1.8rem}
 .cd-card{border:0.5px solid var(--border);border-radius:12px;padding:14px 16px;background:var(--white);position:relative;overflow:hidden}
 .cd-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%}
-.cd-title{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--muted);margin-bottom:4px}
-.cd-num{font-size:36px;font-weight:200;letter-spacing:-.02em;line-height:1}
+.cd-title{font-family:'DM Sans',sans-serif;font-weight:300;font-size:12px;color:var(--muted);margin-bottom:4px;font-style:normal}
+.cd-num{font-size:36px;font-weight:200;letter-spacing:-.02em;line-height:1;font-family:'Plus Jakarta Sans',sans-serif}
 .cd-unit{font-size:10px;color:var(--muted);letter-spacing:.1em;margin-top:3px}
 .cd-date{font-size:10px;color:var(--muted);margin-top:6px}
 /* HABITS */
@@ -117,7 +117,7 @@ html,body{min-height:100%;background:var(--ivory);color:var(--text);font-family:
 /* MONTHLY */
 .cal-wrap{border:0.5px solid var(--border);border-radius:12px;overflow:hidden;background:var(--white)}
 .cal-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:0.5px solid var(--border)}
-.cal-title{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px}
+.cal-title{font-family:'Fraunces',serif;font-style:italic;font-weight:300;font-size:18px}
 .cal-nav{display:flex;gap:6px}
 .cal-nav-btn{width:28px;height:28px;border-radius:50%;border:0.5px solid var(--border);background:none;cursor:pointer;font-size:12px;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all .15s}
 .cal-nav-btn:hover{border-color:var(--mint);color:var(--mint-dark)}
@@ -490,23 +490,48 @@ async function init(){
 
 /* ── DRAG-SPIN DATE INPUTS ── */
 function initDragSpinDates(){
+  function getSegmentByX(inp, clientX){
+    const rect=inp.getBoundingClientRect();
+    const w=rect.width;
+    const x=clientX-rect.left;
+    // date input 너비를 3등분: 앞쪽=년, 중간=월, 뒤쪽=일
+    if(x < w*0.4) return 'year';
+    if(x < w*0.65) return 'month';
+    return 'day';
+  }
   function applySpinToAll(){
     document.querySelectorAll('input[type=date]').forEach(inp=>{
       if(inp._spinApplied)return;inp._spinApplied=true;
-      let startY=null,startVal=null,moved=false;
-      inp.addEventListener('mousedown',e=>{startY=e.clientY;startVal=inp.value||today();moved=false;});
-      window.addEventListener('mousemove',function onMove(e){
+      let startY=null,startVal=null,draggingDate=false,segment='day';
+
+      function onMove(e){
         if(startY===null)return;
         const dy=startY-e.clientY;
-        if(Math.abs(dy)<6&&!moved)return;
-        moved=true;e.preventDefault();
-        const days=Math.round(dy/10);
-        if(!days)return;
-        const d=new Date((startVal||today())+'T00:00:00');d.setDate(d.getDate()+days);
+        if(!draggingDate){
+          if(Math.abs(dy)<12)return;
+          draggingDate=true;
+        }
+        e.preventDefault();
+        const steps=Math.round(dy/12);
+        if(!steps)return;
+        const d=new Date((startVal||today())+'T00:00:00');
+        if(segment==='year') d.setFullYear(d.getFullYear()+steps);
+        else if(segment==='month') d.setMonth(d.getMonth()+steps);
+        else d.setDate(d.getDate()+steps);
         const nv=fmtDate(d);
         if(nv!==inp.value){inp.value=nv;inp.dispatchEvent(new Event('change',{bubbles:true}));}
-      },{passive:false});
-      inp.addEventListener('mouseup',()=>{startY=null;startVal=null;});
+      }
+      function onUp(){
+        startY=null;startVal=null;draggingDate=false;
+        window.removeEventListener('mousemove',onMove);
+        window.removeEventListener('mouseup',onUp);
+      }
+      inp.addEventListener('mousedown',e=>{
+        segment=getSegmentByX(inp, e.clientX);
+        startY=e.clientY;startVal=inp.value||today();draggingDate=false;
+        window.addEventListener('mousemove',onMove,{passive:false});
+        window.addEventListener('mouseup',onUp);
+      });
     });
   }
   applySpinToAll();
