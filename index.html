@@ -720,7 +720,7 @@ function makePie(done,isToday,isFuture,size=70){
   const strokeA=isToday?'.25':isFuture?'.05':'.1';
   const strokeW=isToday?'1.5':'0.5';
   let paths=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="rgba(44,44,42,${fillA})" stroke="rgba(44,44,42,${strokeA})" stroke-width="${strokeW}"/>`;
-  if(!isFuture) done.forEach(h=>{const idx=habits.indexOf(h),s=idx*slice-90,e=s+slice;paths+=pieSlice(cx,cy,r,s,e,h.color+'CC');});
+  if(!isFuture) done.forEach(h=>{const idx=habits.findIndex(hab=>hab.id===h.id),s=idx*slice-90,e=s+slice;if(idx>=0)paths+=pieSlice(cx,cy,r,s,e,h.color+'CC');});
   if(isToday)paths+=`<circle cx="${cx}" cy="${cy}" r="2.5" fill="rgba(44,44,42,.2)"/>`;
   return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">${paths}</svg>`;
 }
