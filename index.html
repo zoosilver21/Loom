@@ -1153,7 +1153,9 @@ function getWkFocusKey(){return 'focus_notion_'+weekKey(dailyDate);}
 function getFocusItems(){return JSON.parse(ls(getWkFocusKey())||'[]');}
 function saveFocusItems(items){const k=getWkFocusKey();lsSet(k,JSON.stringify(items));dbSet(k,items);}
 
+let focusEditing=false;
 function renderFocus(){
+  if(focusEditing)return;
   const wk=weekKey(dailyDate);
   document.getElementById('focusWeekLabel').textContent=getWeekRange();
   const list=document.getElementById('focusList');
@@ -1172,11 +1174,13 @@ function makeFocusRow(item,i,items){
   cell.style.color=item.color||'var(--text)';
   if(item.bold)cell.style.fontWeight='400';
   cell.innerHTML=item.text||'';
-  cell.addEventListener('compositionend',()=>{items[i].text=cell.innerHTML;saveFocusItems(items);});
-  cell.addEventListener('input',()=>{
-    // 조합 중이 아닐 때만 저장 (한글 IME 문제 방지)
-    if(!cell.composing)items[i].text=cell.innerHTML;saveFocusItems(items);
-  });
+  cell.addEventListener('focus',()=>{focusEditing=true;});
+  cell.addEventListener('blur',()=>{focusEditing=false;items[i].text=cell.innerHTML;saveFocusItems(items);});
+  let isComposing=false;
+  cell.addEventListener('compositionstart',()=>{isComposing=true;});
+  cell.addEventListener('compositionend',()=>{isComposing=false;items[i].text=cell.innerHTML;saveFocusItems(items);});
+  cell.addEventListener('input',()=>{if(!isComposing){items[i].text=cell.innerHTML;saveFocusItems(items);}});
+  cell.addEventListener('blur',()=>{items[i].text=cell.innerHTML;saveFocusItems(items);});
   cell.addEventListener('keydown',e=>{
     if(e.key==='Enter'){e.preventDefault();items.splice(i+1,0,{text:'',color:'',bold:false});saveFocusItems(items);renderFocus();setTimeout(()=>{const rows=document.querySelectorAll('#focusList .notion-cell');if(rows[i+1])rows[i+1].focus();},30);}
     if(e.key==='Backspace'&&cell.innerHTML===''&&items.length>1){e.preventDefault();items.splice(i,1);saveFocusItems(items);renderFocus();setTimeout(()=>{const rows=document.querySelectorAll('#focusList .notion-cell');if(rows[Math.max(0,i-1)])rows[Math.max(0,i-1)].focus();},30);}
@@ -1216,8 +1220,11 @@ function makeTodoRow(t,i,todos){
   text.className='todo-text'+(t.done?' done-text':'');
   text.contentEditable='true';
   text.innerHTML=t.text||'';
-  text.addEventListener('compositionend',()=>{todos[i].text=text.innerHTML;saveTodos(todos);});
-  text.addEventListener('input',()=>{if(!text.composing){todos[i].text=text.innerHTML;saveTodos(todos);}});
+  let isTodoComposing=false;
+  text.addEventListener('compositionstart',()=>{isTodoComposing=true;});
+  text.addEventListener('compositionend',()=>{isTodoComposing=false;todos[i].text=text.innerHTML;saveTodos(todos);});
+  text.addEventListener('input',()=>{if(!isTodoComposing){todos[i].text=text.innerHTML;saveTodos(todos);}});
+  text.addEventListener('blur',()=>{todos[i].text=text.innerHTML;saveTodos(todos);});
   text.addEventListener('keydown',e=>{
     if(e.key==='Enter'){e.preventDefault();todos.splice(i+1,0,{text:'',done:false});saveTodos(todos);renderTodo();setTimeout(()=>{const rows=document.querySelectorAll('#todoList .todo-text');if(rows[i+1])rows[i+1].focus();},30);}
     if(e.key==='Backspace'&&text.innerHTML===''&&todos.length>1){e.preventDefault();todos.splice(i,1);saveTodos(todos);renderTodo();setTimeout(()=>{const rows=document.querySelectorAll('#todoList .todo-text');if(rows[Math.max(0,i-1)])rows[Math.max(0,i-1)].focus();},30);}
