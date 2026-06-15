@@ -169,7 +169,22 @@ html,body{min-height:100%;background:var(--ivory);color:var(--text);font-family:
 .save-btn{width:100%;border:0.5px solid var(--mint);border-radius:8px;padding:10px;font-size:13px;font-weight:300;font-family:'DM Sans',sans-serif;color:var(--mint-dark);background:var(--mint-light);cursor:pointer;margin-top:6px}
 .save-btn:hover{background:var(--mint);color:#fff}
 .gcal-hint{font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:8px}
-@media(max-width:600px){.cd-num{font-size:28px}.tabs .tab{padding:8px 8px 12px;font-size:10px}.page{padding:14px}}
+@media(max-width:600px){
+  .cd-num{font-size:28px}
+  .tabs .tab{padding:8px 8px 12px;font-size:10px}
+  .page{padding:10px}
+  /* monthly calendar mobile fix */
+  .cal-grid{grid-template-columns:repeat(7,1fr)}
+  .cal-day{min-height:48px;padding:3px}
+  .day-num{font-size:10px;width:18px;height:18px}
+  .day-event{font-size:8px;padding:1px 3px}
+  /* habit grid mobile: 1 column */
+  .habit-list{grid-template-columns:1fr}
+  /* circle row mobile */
+  .circle-row{gap:3px}
+  /* timeblock date nav */
+  .nav-arrow-btn{width:32px;height:32px}
+}
 /* TOGGLE SECTION */
 .toggle-section{margin-bottom:1.4rem}
 .toggle-header{display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 0;user-select:none}
@@ -767,12 +782,20 @@ function renderHabits(){
     // check — 오른쪽 절반 클릭
     const chk=document.createElement('div');chk.className='chk';
     if(done){chk.style.background=h.color;chk.style.borderColor=h.color;chk.style.color='#fff';chk.textContent='✓';}
+    const doCheck=()=>{dbSet('habit_'+h.id+'_'+dailyDate,done?'0':'1');renderHabits();renderCircles();};
     div.onclick=e=>{
       const rect=div.getBoundingClientRect();
       const x=e.clientX-rect.left;
       if(x<rect.width*0.5)return;
-      dbSet('habit_'+h.id+'_'+dailyDate,done?'0':'1');renderHabits();renderCircles();
+      doCheck();
     };
+    div.addEventListener('touchend',e=>{
+      const rect=div.getBoundingClientRect();
+      const x=e.changedTouches[0].clientX-rect.left;
+      if(x<rect.width*0.4)return;
+      e.preventDefault();
+      doCheck();
+    },{passive:false});
     div.appendChild(handle);div.appendChild(dot);div.appendChild(name);div.appendChild(st);div.appendChild(chk);
     g.appendChild(div);
   });
@@ -1149,7 +1172,11 @@ function makeFocusRow(item,i,items){
   cell.style.color=item.color||'var(--text)';
   if(item.bold)cell.style.fontWeight='400';
   cell.innerHTML=item.text||'';
-  cell.addEventListener('input',()=>{items[i].text=cell.innerHTML;saveFocusItems(items);});
+  cell.addEventListener('compositionend',()=>{items[i].text=cell.innerHTML;saveFocusItems(items);});
+  cell.addEventListener('input',()=>{
+    // 조합 중이 아닐 때만 저장 (한글 IME 문제 방지)
+    if(!cell.composing)items[i].text=cell.innerHTML;saveFocusItems(items);
+  });
   cell.addEventListener('keydown',e=>{
     if(e.key==='Enter'){e.preventDefault();items.splice(i+1,0,{text:'',color:'',bold:false});saveFocusItems(items);renderFocus();setTimeout(()=>{const rows=document.querySelectorAll('#focusList .notion-cell');if(rows[i+1])rows[i+1].focus();},30);}
     if(e.key==='Backspace'&&cell.innerHTML===''&&items.length>1){e.preventDefault();items.splice(i,1);saveFocusItems(items);renderFocus();setTimeout(()=>{const rows=document.querySelectorAll('#focusList .notion-cell');if(rows[Math.max(0,i-1)])rows[Math.max(0,i-1)].focus();},30);}
@@ -1189,7 +1216,8 @@ function makeTodoRow(t,i,todos){
   text.className='todo-text'+(t.done?' done-text':'');
   text.contentEditable='true';
   text.innerHTML=t.text||'';
-  text.addEventListener('input',()=>{todos[i].text=text.innerHTML;saveTodos(todos);});
+  text.addEventListener('compositionend',()=>{todos[i].text=text.innerHTML;saveTodos(todos);});
+  text.addEventListener('input',()=>{if(!text.composing){todos[i].text=text.innerHTML;saveTodos(todos);}});
   text.addEventListener('keydown',e=>{
     if(e.key==='Enter'){e.preventDefault();todos.splice(i+1,0,{text:'',done:false});saveTodos(todos);renderTodo();setTimeout(()=>{const rows=document.querySelectorAll('#todoList .todo-text');if(rows[i+1])rows[i+1].focus();},30);}
     if(e.key==='Backspace'&&text.innerHTML===''&&todos.length>1){e.preventDefault();todos.splice(i,1);saveTodos(todos);renderTodo();setTimeout(()=>{const rows=document.querySelectorAll('#todoList .todo-text');if(rows[Math.max(0,i-1)])rows[Math.max(0,i-1)].focus();},30);}
@@ -1365,7 +1393,8 @@ function renderMonthly(){
     const k='cal_'+ds,saved=ls(k)||'';
     if(saved){const e=document.createElement('div');e.className='day-event';e.style.background='rgba(133,212,216,.15)';e.style.color='var(--mint-dark)';e.style.fontWeight='400';e.textContent=saved;div.appendChild(e);}
     const tbKey='tb_blocks_'+ds,tbData=ls(tbKey);
-    if(tbData){try{const blocks=JSON.parse(tbData);if(blocks.length>0){const dot=document.createElement('div');dot.style.cssText='width:5px;height:5px;border-radius:50%;background:var(--muted);margin-top:2px;opacity:.4';div.appendChild(dot);}}catch(e){}}
+    // 타임블록 있으면 작은 선으로 표시 (dot 제거)
+    
     // habit dots
     const habitsDone=habits.filter(h=>ls('habit_'+h.id+'_'+ds)==='1');
     if(habitsDone.length>0){
