@@ -481,6 +481,38 @@ async function init(){
   initDragSpinDates();
   dbListen('habits',v=>{if(v){habits=v;renderHabits();renderCircles();}});
   dbListen('projects',v=>{if(v){projects=v;renderProjects();}});
+  dbListen('milestones',v=>{if(v){milestones=v;renderCountdown();renderMonthly();renderEPRoadmap();renderFocusAutoItems();}});
+  // 날짜별 데이터 실시간 리스닝
+  function listenDailyData(date){
+    if(!db)return;
+    // habit checks
+    habits.forEach(h=>{
+      onValue(ref(db,UID+'/habit_'+h.id+'_'+date),s=>{
+        if(s.exists())lsSet('habit_'+h.id+'_'+date,s.val());
+        if(date===dailyDate){renderHabits();renderCircles();}
+      });
+    });
+    // timeblocks
+    onValue(ref(db,UID+'/tb_blocks_'+date),s=>{
+      if(s.exists()){lsSet('tb_blocks_'+date,JSON.stringify(s.val()));if(date===tbDate){tbBlocks=s.val();renderTBBlocks();}}
+    });
+    // todo
+    onValue(ref(db,UID+'/todo_'+date),s=>{
+      if(s.exists()){lsSet('todo_'+date,JSON.stringify(s.val()));if(date===dailyDate)renderTodo();}
+    });
+    // calendar memo
+    onValue(ref(db,UID+'/cal_'+date),s=>{
+      if(s.exists())lsSet('cal_'+date,s.val());
+    });
+  }
+  // 오늘 + 최근 7일 리스닝
+  for(let i=0;i<7;i++){const d=new Date();d.setDate(d.getDate()-i);listenDailyData(fmtDate(d));}
+  // focus (주차별)
+  if(db){
+    onValue(ref(db,UID+'/'+getWkFocusKey()),s=>{
+      if(s.exists()){lsSet(getWkFocusKey(),JSON.stringify(s.val()));renderFocus();}
+    });
+  }
   const ms2=new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate()+1)-new Date();
   setTimeout(()=>{
     dailyDate=today();tbDate=today();
@@ -739,7 +771,7 @@ function renderHabits(){
       const rect=div.getBoundingClientRect();
       const x=e.clientX-rect.left;
       if(x<rect.width*0.5)return;
-      lsSet('habit_'+h.id+'_'+dailyDate,done?'0':'1');renderHabits();renderCircles();
+      dbSet('habit_'+h.id+'_'+dailyDate,done?'0':'1');renderHabits();renderCircles();
     };
     div.appendChild(handle);div.appendChild(dot);div.appendChild(name);div.appendChild(st);div.appendChild(chk);
     g.appendChild(div);
@@ -1096,7 +1128,7 @@ window.toggleSection=id=>{
 /* ── FOCUS (notion style) ── */
 function getWkFocusKey(){return 'focus_notion_'+weekKey(dailyDate);}
 function getFocusItems(){return JSON.parse(ls(getWkFocusKey())||'[]');}
-function saveFocusItems(items){lsSet(getWkFocusKey(),JSON.stringify(items));}
+function saveFocusItems(items){const k=getWkFocusKey();lsSet(k,JSON.stringify(items));dbSet(k,items);}
 
 function renderFocus(){
   const wk=weekKey(dailyDate);
@@ -1139,7 +1171,7 @@ window.addFocusItem=()=>{const items=getFocusItems();items.push({text:'',color:'
 /* ── TODO ── */
 function getTodoKey(){return 'todo_'+dailyDate;}
 function getTodos(){return JSON.parse(ls(getTodoKey())||'[]');}
-function saveTodos(t){lsSet(getTodoKey(),JSON.stringify(t));}
+function saveTodos(t){const k=getTodoKey();lsSet(k,JSON.stringify(t));dbSet(k,t);}
 function renderTodo(){
   const list=document.getElementById('todoList');list.innerHTML='';
   const todos=getTodos();
@@ -1304,7 +1336,7 @@ function renderWeekly(){
       const ds=fmtDate(d),k='weekly_'+ds+'_'+row,saved=ls(k)||'';
       const cell=document.createElement('div');cell.className='week-cell';
       cell.innerHTML=`<textarea placeholder="${row}...">${saved}</textarea>`;
-      cell.querySelector('textarea').addEventListener('input',e=>{lsSet(k,e.target.value);if(ds===tbDate)renderTBBlocks();});
+      cell.querySelector('textarea').addEventListener('input',e=>{lsSet(k,e.target.value);dbSet(k,e.target.value);if(ds===tbDate)renderTBBlocks();});
       grid.appendChild(cell);
     });
   });
@@ -1379,7 +1411,7 @@ function openDayModal(ds){
   const memoInput=document.createElement('textarea');
   memoInput.value=memo;memoInput.placeholder='메모 추가...';
   memoInput.style.cssText='width:100%;border:0.5px solid var(--border);border-radius:7px;padding:8px 10px;font-size:13px;font-weight:300;font-family:DM Sans,sans-serif;background:var(--ivory);color:var(--text);outline:none;resize:none;height:60px;line-height:1.5';
-  memoInput.addEventListener('input',e=>{lsSet('cal_'+ds,e.target.value);renderMonthly();});
+  memoInput.addEventListener('input',e=>{lsSet('cal_'+ds,e.target.value);dbSet('cal_'+ds,e.target.value);renderMonthly();});
   memoWrap.appendChild(memoInput);content.appendChild(memoWrap);
   // timeblocks
   const tbData=ls('tb_blocks_'+ds);
