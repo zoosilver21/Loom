@@ -174,16 +174,21 @@ html,body{min-height:100%;background:var(--ivory);color:var(--text);font-family:
   .tabs .tab{padding:8px 8px 12px;font-size:10px}
   .page{padding:10px}
   /* monthly calendar mobile fix */
-  .cal-grid{grid-template-columns:repeat(7,1fr)}
-  .cal-day{min-height:48px;padding:3px}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr)}
+  .cal-day{min-height:60px;height:60px;padding:4px 3px;overflow:hidden}
+  .cal-dow{font-size:9px;padding:6px 0}
   .day-num{font-size:10px;width:18px;height:18px}
-  .day-event{font-size:8px;padding:1px 3px}
+  .day-event{font-size:8px;padding:1px 3px;margin-bottom:1px}
+  .leg-dot{width:5px;height:5px}
   /* habit grid mobile: 1 column */
   .habit-list{grid-template-columns:1fr}
   /* circle row mobile */
-  .circle-row{gap:3px}
-  /* timeblock date nav */
+  .circle-row{gap:2px}
+  .day-col{gap:3px}
+  /* nav */
   .nav-arrow-btn{width:32px;height:32px}
+  /* weekly grid */
+  .week-grid{grid-template-columns:36px repeat(7,1fr)}
 }
 /* TOGGLE SECTION */
 .toggle-section{margin-bottom:1.4rem}
@@ -239,7 +244,7 @@ html,body{min-height:100%;background:var(--ivory);color:var(--text);font-family:
 </head>
 <body>
 <nav class="nav">
-  <div class="logo">Loom</div>
+  <div class="logo">Loom<span id="userBadge" style="font-size:11px;font-weight:300;font-style:normal;color:var(--muted);margin-left:6px;font-family:'DM Sans',sans-serif"></span></div>
   <div class="tabs">
     <button class="tab active" onclick="switchTab('daily')">Daily</button>
     <button class="tab" onclick="switchTab('weekly')">Weekly</button>
@@ -394,7 +399,7 @@ html,body{min-height:100%;background:var(--ivory);color:var(--text);font-family:
     <div class="proj-list" id="projList"></div>
   </div>
   <div class="section">
-    <div class="sec-label">EP Roadmap</div>
+    <div class="sec-label">Milestones</div>
     <div style="border:0.5px solid var(--border);border-radius:12px;padding:16px;background:var(--white)" id="epRoadmap"></div>
   </div>
 </div>
@@ -432,7 +437,7 @@ import { getDatabase, ref, set, get, onValue } from 'https://www.gstatic.com/fir
 
 const firebaseConfig = window._firebaseConfig || null;
 let db = null;
-const UID = 'jueun';
+const UID=(()=>{const p=new URLSearchParams(window.location.search);return p.get('user')||'jueun';})();
 if(firebaseConfig){try{const app=initializeApp(firebaseConfig);db=getDatabase(app);}catch(e){}}
 
 const DOWS_MON=['월','화','수','목','금','토','일'];
@@ -475,8 +480,8 @@ let weekOffset=0, currentMonth=new Date();
 function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function fmtDate(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function weekKey(dateStr){const d=dateStr?new Date(dateStr+'T00:00:00'):new Date(),jan=new Date(d.getFullYear(),0,1);return d.getFullYear()+'_w'+Math.ceil((((d-jan)/86400000)+jan.getDay()+1)/7);}
-function ls(k){return localStorage.getItem('loom_'+k);}
-function lsSet(k,v){localStorage.setItem('loom_'+k,typeof v==='string'?v:JSON.stringify(v));}
+function ls(k){return localStorage.getItem('loom_'+UID+'_'+k);}
+function lsSet(k,v){localStorage.setItem('loom_'+UID+'_'+k,typeof v==='string'?v:JSON.stringify(v));}
 async function dbSet(path,val){if(db){try{await set(ref(db,UID+'/'+path),val);}catch(e){}}lsSet(path,val);}
 async function dbGet(path){if(db){try{const s=await get(ref(db,UID+'/'+path));return s.exists()?s.val():null;}catch(e){}}const v=ls(path);if(!v)return null;try{return JSON.parse(v);}catch{return v;}}
 function dbListen(path,cb){if(db){onValue(ref(db,UID+'/'+path),s=>cb(s.exists()?s.val():null));return;}const v=ls(path);cb(v?(()=>{try{return JSON.parse(v);}catch{return v;}})():null);}
@@ -488,6 +493,8 @@ async function init(){
   const dp=document.getElementById('tbDatePicker');
   dp.value=tbDate;
   dp.addEventListener('change',e=>{tbDate=e.target.value;loadTBForDate();});
+  const badge=document.getElementById('userBadge');
+  if(badge&&UID!=='jueun')badge.textContent='@'+UID;
   setDate();renderCountdown();
   renderHabits();renderCircles();
   buildTimeline();renderTBLegend();renderTBBlocks();
