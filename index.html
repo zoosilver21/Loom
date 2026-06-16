@@ -244,7 +244,7 @@ html,body{min-height:100%;background:var(--ivory);color:var(--text);font-family:
 </head>
 <body>
 <nav class="nav">
-  <div class="logo">Loom<span id="userBadge" style="font-size:11px;font-weight:300;font-style:normal;color:var(--muted);margin-left:6px;font-family:'DM Sans',sans-serif"></span></div>
+  <div class="logo">Loom</div>
   <div class="tabs">
     <button class="tab active" onclick="switchTab('daily')">Daily</button>
     <button class="tab" onclick="switchTab('weekly')">Weekly</button>
@@ -575,7 +575,13 @@ async function init(){
     });
     // todo
     onValue(ref(db,UID+'/todo_'+date),s=>{
-      if(s.exists()){lsSet('todo_'+date,JSON.stringify(s.val()));if(date===dailyDate)renderTodo();}
+      if(s.exists()){
+        lsSet('todo_'+date,JSON.stringify(s.val()));
+        // 포커스가 투두 안에 있으면 재렌더링 안 함
+        const active=document.activeElement;
+        const inTodo=active&&active.closest('#todoList');
+        if(date===dailyDate&&!inTodo)renderTodo();
+      }
     });
     // calendar memo
     onValue(ref(db,UID+'/cal_'+date),s=>{
@@ -587,7 +593,12 @@ async function init(){
   // focus (주차별)
   if(db){
     onValue(ref(db,UID+'/'+getWkFocusKey()),s=>{
-      if(s.exists()){lsSet(getWkFocusKey(),JSON.stringify(s.val()));renderFocus();}
+      if(s.exists()){
+        lsSet(getWkFocusKey(),JSON.stringify(s.val()));
+        const active=document.activeElement;
+        const inFocus=active&&active.closest('#focusList');
+        if(!inFocus)renderFocus();
+      }
     });
   }
   const ms2=new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate()+1)-new Date();
@@ -1244,8 +1255,26 @@ function makeFocusRow(item,i,items){
   cell.addEventListener('input',()=>{if(!isComposing){items[i].text=cell.innerHTML;saveFocusItems(items);}});
   cell.addEventListener('blur',()=>{items[i].text=cell.innerHTML;saveFocusItems(items);});
   cell.addEventListener('keydown',e=>{
-    if(e.key==='Enter'){e.preventDefault();items.splice(i+1,0,{text:'',color:'',bold:false});saveFocusItems(items);renderFocus();setTimeout(()=>{const rows=document.querySelectorAll('#focusList .notion-cell');if(rows[i+1])rows[i+1].focus();},30);}
-    if(e.key==='Backspace'&&cell.innerHTML===''&&items.length>1){e.preventDefault();items.splice(i,1);saveFocusItems(items);renderFocus();setTimeout(()=>{const rows=document.querySelectorAll('#focusList .notion-cell');if(rows[Math.max(0,i-1)])rows[Math.max(0,i-1)].focus();},30);}
+    if(e.key==='Enter'){
+      e.preventDefault();
+      items.splice(i+1,0,{text:'',color:'',bold:false});
+      saveFocusItems(items);
+      renderFocus();
+      setTimeout(()=>{
+        const rows=document.querySelectorAll('#focusList .notion-cell');
+        if(rows[i+1]){rows[i+1].focus();}
+      },50);
+    }
+    if(e.key==='Backspace'&&cell.innerHTML===''&&items.length>1){
+      e.preventDefault();
+      items.splice(i,1);
+      saveFocusItems(items);
+      renderFocus();
+      setTimeout(()=>{
+        const rows=document.querySelectorAll('#focusList .notion-cell');
+        if(rows[Math.max(0,i-1)])rows[Math.max(0,i-1)].focus();
+      },50);
+    }
   });
   const handle=document.createElement('div');handle.className='drag-handle';handle.textContent='⠿';handle.draggable=true;
   const toolbar=document.createElement('div');toolbar.className='notion-toolbar';
