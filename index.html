@@ -508,31 +508,25 @@ const HOUR_H=48, START_H=6;
 const WEEK_ROWS=['아침','오전','오후','저녁','밤'];
 
 let habits=[
-  {id:'read',name:'독서',color:'#A8C0C8'},
-  {id:'move',name:'운동',color:'#A8C4A8'},
-  {id:'skin',name:'피부관리',color:'#E0D8F0'},
-  {id:'blog',name:'블로그',color:'#E8B8A0'},
+  {id:'habit1',name:'운동',color:'#9FE1CB'},
+  {id:'habit2',name:'독서',color:'#80B0E8'},
+  {id:'habit3',name:'물 마시기',color:'#BDD7DE'},
+  {id:'habit4',name:'일기 쓰기',color:'#E9ACBB'},
 ];
 let projects=[
-  {name:'EP 준비',dot:'#85D4D8',tag:'제작중',note:'믹싱 단계'},
-  {name:'Clean up 싱글',dot:'#85D4D8',tag:'D-day',note:'7월 중순'},
-  {name:'hiking 편곡',dot:'#A8C4A8',tag:'진행중',note:'93BPM / Gb'},
-  {name:'유튜브 쇼츠',dot:'#E8B8A0',tag:'수익화',note:'촬영 준비'},
-  {name:'JuO 콘텐츠',dot:'#A8C0C8',tag:'세계관',note:'Phase 1'},
-  {name:'공연 준비',dot:'#E0D8F0',tag:'예정',note:'세션 리허설'},
-  {name:'레슨 준비',dot:'#D3D1C7',tag:'상시',note:'—'},
+  {name:'프로젝트 1',dot:'#85D4D8',tag:'진행중',note:'',deadline:''},
+  {name:'프로젝트 2',dot:'#E9ACBB',tag:'예정',note:'',deadline:''},
 ];
 let milestones=[
-  {date:'2025-06-30',label:'믹스 완료 목표',color:'#A8C0C8'},
-  {date:'2025-07-01',label:'세계관 콘텐츠 Phase 1',color:'#E8B8A0'},
-  {date:'2025-07-15',label:'Clean up 싱글 발매',color:'#85D4D8'},
-  {date:'2025-08-10',label:'Full EP 발매',color:'#A8C4A8'},
+  {date:'',label:'목표 1',color:'#85D4D8'},
+  {date:'',label:'목표 2',color:'#E9ACBB'},
 ];
 let TB_CATS=[
-  {id:'swim',label:'수영',color:'#85B7EB'},{id:'church',label:'교회',color:'#C0DD97'},
-  {id:'music',label:'음악작업',color:'#85D4D8'},{id:'workout',label:'운동',color:'#9FE1CB'},
-  {id:'skin2',label:'피부관리',color:'#F4C0D1'},{id:'blog2',label:'블로그',color:'#FAC775'},
-  {id:'read2',label:'독서',color:'#E0D8F0'},{id:'rest',label:'휴식',color:'#D3D1C7'},
+  {id:'work',label:'업무',color:'#80B0E8'},
+  {id:'health',label:'건강',color:'#9FE1CB'},
+  {id:'personal',label:'개인',color:'#E9ACBB'},
+  {id:'study',label:'공부',color:'#FFEDA2'},
+  {id:'rest',label:'휴식',color:'#D3D1C7'},
 ];
 
 let tbMode='cat', tbBlocks=[], tbDate=today(), dailyDate=today(), dragging=false, dragStart=null, dragEnd=null, pendingBlock=null, selectedCat=null;
