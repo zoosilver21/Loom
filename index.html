@@ -726,10 +726,12 @@ window.shiftTBDate=dir=>{
 
 /* ── COUNTDOWN ── */
 function renderCountdown(){
-  const now=new Date();now.setHours(0,0,0,0);
+  const todayStr=today();
   function diff(dateStr){
-    const t=new Date(dateStr);
-    return Math.ceil((t-now)/86400000);
+    if(!dateStr)return 999;
+    const now=new Date(todayStr+'T00:00:00');
+    const t=new Date(dateStr+'T00:00:00');
+    return Math.round((t-now)/86400000);
   }
   const grid=document.getElementById('cdGrid');grid.innerHTML='';
   const colors=['single','ep','ep','single'];
@@ -1259,11 +1261,12 @@ function makeFocusRow(item,i,items){
       e.preventDefault();
       items.splice(i+1,0,{text:'',color:'',bold:false});
       saveFocusItems(items);
-      renderFocus();
-      setTimeout(()=>{
-        const rows=document.querySelectorAll('#focusList .notion-cell');
-        if(rows[i+1]){rows[i+1].focus();}
-      },50);
+      const list=document.getElementById('focusList');
+      const newRow=makeFocusRow({text:'',color:'',bold:false},i+1,items);
+      const rows=list.querySelectorAll('.notion-row');
+      if(rows[i+1])list.insertBefore(newRow,rows[i+1]);
+      else list.insertBefore(newRow,list.querySelector('.small-btn'));
+      setTimeout(()=>newRow.querySelector('.notion-cell')?.focus(),30);
     }
     if(e.key==='Backspace'&&cell.innerHTML===''&&items.length>1){
       e.preventDefault();
@@ -1572,12 +1575,12 @@ document.getElementById('dayModal').addEventListener('click',e=>{if(e.target===d
 
 /* ── EP ROADMAP ── */
 function renderEPRoadmap(){
-  const el=document.getElementById('epRoadmap'),now=new Date();now.setHours(0,0,0,0);
-  el.innerHTML='';
+  const el=document.getElementById('epRoadmap');el.innerHTML='';
+  const todayStr=today();
   const sorted=[...milestones].sort((a,b)=>a.date.localeCompare(b.date));
   sorted.forEach((ms,si)=>{
     const origIdx=milestones.indexOf(ms);
-    const t=new Date(ms.date),d=Math.ceil((t-now)/86400000);
+    const d=ms.date?Math.round((new Date(ms.date+'T00:00:00')-new Date(todayStr+'T00:00:00'))/86400000):999;
     const isPast=d<0,isT=d===0,dStr=isPast?'Done':isT?'D-day':'D-'+d;
     const row=document.createElement('div');row.className='roadmap-row';
     // color dot — palette
