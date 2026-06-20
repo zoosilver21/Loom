@@ -3,1659 +3,1052 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Loom">
-<title>Loom</title>
-<script src="firebase-config.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Plus+Jakarta+Sans:wght@200;300;400&family=Fraunces:ital,opsz,wght@0,9..144,300;1,9..144,300&family=DM+Sans:wght@200;300;400&display=swap" rel="stylesheet">
+<title>셀럽템 파인더 — 연예인 쇼핑쇼츠 발굴기</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --ivory:#FAFAF6;--mint:#85D4D8;--mint-light:#D4F0F1;--mint-dark:#4A9EA2;
-  --text:#2C2C2A;--muted:#888780;--border:rgba(44,44,42,0.12);--white:#fff;
+  --bg:#F7F7FA;--surface:#FFFFFF;--border:#EAEAF0;--text:#1A1A2E;--muted:#8888A0;
+  --accent:#6C63FF;--accent2:#FF6B9D;--accent-light:#EEF0FF;
+  --green:#22C55E;--red:#EF4444;--radius:12px;--sidebar-w:220px;
 }
-html,body{min-height:100%;background:var(--ivory);color:var(--text);font-family:'DM Sans',sans-serif;font-weight:300}
-.nav{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 0;border-bottom:0.5px solid var(--border);background:var(--ivory);position:sticky;top:0;z-index:100}
-.logo{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:22px}
-.tabs{display:flex}
-.tab{font-size:11px;font-weight:300;letter-spacing:.08em;padding:8px 11px 12px;border:none;background:none;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-0.5px;transition:color .15s,border-color .15s}
-.tab.active{color:var(--text);border-bottom-color:var(--mint)}
-.nav-right{display:flex;align-items:center;gap:8px}
-.date-badge{font-size:11px;color:var(--muted)}
-.settings-btn{width:28px;height:28px;border-radius:50%;border:0.5px solid var(--border);background:none;cursor:pointer;color:var(--muted);font-size:13px;transition:all .15s}
-.settings-btn:hover{border-color:var(--mint);color:var(--mint-dark)}
-.page{display:none;padding:18px;max-width:760px;margin:0 auto}
-.page.active{display:block}
-.sec-label{font-size:10px;font-weight:400;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:10px}
-.section{margin-bottom:1.8rem}
-/* COUNTDOWN */
-.cd-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1.8rem}
-.cd-card{border:0.5px solid var(--border);border-radius:12px;padding:14px 16px;background:var(--white);position:relative;overflow:hidden}
-.cd-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%}
-.cd-title{font-family:'DM Sans',sans-serif;font-weight:300;font-size:12px;color:var(--muted);margin-bottom:4px;font-style:normal}
-.cd-num{font-size:36px;font-weight:200;letter-spacing:-.02em;line-height:1;font-family:'Plus Jakarta Sans',sans-serif}
-.cd-unit{font-size:10px;color:var(--muted);letter-spacing:.1em;margin-top:3px}
-.cd-date{font-size:10px;color:var(--muted);margin-top:6px}
-/* HABITS */
-.habit-list{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px}
-.habit-check{display:flex;align-items:center;gap:10px;border:0.5px solid var(--border);border-radius:10px;padding:10px 14px;background:var(--white);cursor:pointer;transition:border-color .15s,background .15s}
-.habit-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
-.habit-name{font-size:13px;font-weight:300;flex:1}
-.habit-streak{font-size:10px;color:var(--muted)}
-.chk{width:20px;height:20px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;color:transparent;transition:all .15s}
-.circle-row{display:flex;gap:6px;justify-content:space-between;margin-top:4px}
-.day-col{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1}
-.day-lbl{font-size:9px;color:var(--muted);letter-spacing:.05em}
-.legend-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-.leg{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted)}
-.leg-dot{width:8px;height:8px;border-radius:50%}
-/* TIMEBLOCK */
-.tb-date-label{font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:300}
-.tb-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.mode-toggle{display:flex;border:0.5px solid var(--border);border-radius:8px;overflow:hidden;background:var(--white)}
-.mode-btn{font-size:11px;font-weight:300;font-family:'DM Sans',sans-serif;padding:5px 11px;border:none;background:none;cursor:pointer;color:var(--muted);transition:all .15s}
-.mode-btn.active{background:var(--mint-light);color:var(--mint-dark)}
-.tb-legend{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
-.tb-leg-item{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--muted)}
-.tb-leg-dot{width:8px;height:8px;border-radius:2px}
-.timeline-wrap{display:flex;border:0.5px solid var(--border);border-radius:12px;overflow:hidden;background:var(--white)}
-.time-col{width:42px;flex-shrink:0;border-right:0.5px solid var(--border)}
-.time-tick{height:48px;display:flex;align-items:flex-start;justify-content:flex-end;padding:4px 7px 0 0;font-size:9px;color:var(--muted)}
-.blocks-col{flex:1;position:relative;cursor:crosshair}
-.hour-row{height:48px;border-bottom:0.5px solid var(--border)}
-.hour-row:last-child{border-bottom:none}
-.half-line{position:absolute;top:24px;left:0;right:0;border-bottom:0.5px dashed rgba(44,44,42,.06)}
-.tb-block{position:absolute;left:4px;right:4px;border-radius:6px;padding:3px 7px;cursor:pointer;z-index:2;overflow:hidden}
-.tb-block:hover .tb-del{opacity:.7}
-.tb-label{font-size:11px;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tb-time{font-size:9px;opacity:.7;margin-top:1px}
-.tb-del{position:absolute;top:3px;right:5px;font-size:10px;opacity:0;transition:opacity .15s;cursor:pointer;background:none;border:none;color:inherit}
-.empty-hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:11px;color:rgba(136,135,128,.45);pointer-events:none;text-align:center;line-height:1.8}
-/* milestone strip in timeline */
-.ms-strip{position:absolute;left:0;right:0;height:2px;z-index:3;pointer-events:none}
-.ms-strip-label{position:absolute;right:6px;top:-14px;font-size:9px;padding:1px 5px;border-radius:3px;white-space:nowrap}
-.cat-picker{border:0.5px solid var(--border);border-radius:12px;padding:14px;margin-top:10px;background:var(--white)}
-.cat-picker-title{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
-.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.cat-btn{border:0.5px solid var(--border);border-radius:7px;padding:7px 4px;background:none;cursor:pointer;font-size:11px;font-family:'DM Sans',sans-serif;font-weight:300;color:var(--text);transition:all .15s;text-align:center}
-.cat-btn.selected{border-width:1.5px}
-.name-row{display:flex;gap:6px;margin-top:8px}
-.name-input{flex:1;border:0.5px solid var(--border);border-radius:7px;padding:6px 10px;font-size:12px;font-weight:300;font-family:'DM Sans',sans-serif;background:var(--ivory);color:var(--text);outline:none}
-.name-input:focus{border-color:var(--mint)}
-.confirm-btn{border:0.5px solid var(--mint);border-radius:7px;padding:6px 14px;background:var(--mint-light);color:var(--mint-dark);font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer}
-.confirm-btn:hover{background:var(--mint);color:#fff}
-.cancel-btn{border:0.5px solid var(--border);border-radius:7px;padding:6px 10px;background:none;color:var(--muted);font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer}
-/* FOCUS */
-.focus-card{border:0.5px solid var(--border);border-radius:12px;padding:14px 16px;background:var(--white)}
-.focus-week{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:var(--muted);margin-bottom:10px}
-.focus-item{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:0.5px solid var(--border)}
-.focus-item:last-of-type{border-bottom:none}
-.fcb{width:16px;height:16px;border-radius:4px;border:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:transparent;transition:all .15s}
-.focus-item.checked .fcb{background:var(--mint);border-color:var(--mint);color:#fff}
-.focus-text{font-size:13px;font-weight:300;flex:1}
-.focus-item.checked .focus-text{color:var(--muted);text-decoration:line-through}
-.small-btn{font-size:11px;color:var(--muted);background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:300;letter-spacing:.04em;padding:8px 0 0;display:block}
-.small-btn:hover{color:var(--mint-dark)}
-/* WEEKLY */
-.week-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.week-range{font-size:12px;color:var(--muted)}
-.week-grid-wrap{border:0.5px solid var(--border);border-radius:12px;overflow:auto;background:var(--white)}
-.week-grid{display:grid;grid-template-columns:44px repeat(7,1fr);min-width:520px}
-.week-head{border-bottom:0.5px solid var(--border);padding:8px 4px;text-align:center;position:relative}
-.week-dow{font-size:10px;letter-spacing:.07em;color:var(--muted)}
-.week-dnum{font-size:15px;font-weight:200;color:var(--text);margin-top:2px}
-.week-dnum.today{color:var(--mint-dark);font-weight:400}
-.week-ms-dot{width:6px;height:6px;border-radius:50%;margin:3px auto 0}
-.week-cell{border-right:0.5px solid var(--border);border-bottom:0.5px solid var(--border);min-height:52px;padding:4px}
-.week-cell:nth-child(7n+1){border-right:none}
-.week-time-cell{border-bottom:0.5px solid var(--border);padding:0 6px;display:flex;align-items:center;justify-content:flex-end}
-.week-time-label{font-size:9px;color:var(--muted)}
-.week-cell textarea{width:100%;height:44px;background:none;border:none;font-size:11px;font-weight:300;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;resize:none;line-height:1.4}
-.week-cell textarea::placeholder{color:rgba(136,135,128,.3)}
-.week-ms-tag{font-size:9px;padding:2px 5px;border-radius:3px;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-/* MONTHLY */
-.cal-wrap{border:0.5px solid var(--border);border-radius:12px;overflow:hidden;background:var(--white)}
-.cal-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:0.5px solid var(--border)}
-.cal-title{font-family:'Fraunces',serif;font-style:italic;font-weight:300;font-size:18px}
-.cal-nav{display:flex;gap:6px}
-.cal-nav-btn{width:28px;height:28px;border-radius:50%;border:0.5px solid var(--border);background:none;cursor:pointer;font-size:12px;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all .15s}
-.cal-nav-btn:hover{border-color:var(--mint);color:var(--mint-dark)}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr)}
-.cal-dow{text-align:center;font-size:10px;letter-spacing:.08em;color:var(--muted);padding:8px 0;border-bottom:0.5px solid var(--border)}
-.cal-day{min-height:68px;border-right:0.5px solid var(--border);border-bottom:0.5px solid var(--border);padding:6px;cursor:pointer;transition:background .1s}
-.cal-day:nth-child(7n){border-right:none}
-.cal-day:hover{background:rgba(133,212,216,.06)}
-.cal-day.other .day-num{color:rgba(136,135,128,.3)}
-.cal-day.today .day-num{background:var(--mint);color:#fff;border-radius:50%}
-.day-num{font-size:12px;font-weight:300;width:22px;height:22px;display:flex;align-items:center;justify-content:center;margin-bottom:3px}
-.day-event{font-size:10px;font-weight:500;padding:2px 5px;border-radius:3px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-/* DAY DETAIL MODAL */
-.day-modal{display:none;position:fixed;inset:0;background:rgba(250,250,246,.9);z-index:300;align-items:center;justify-content:center}
-.day-modal.open{display:flex}
-.day-modal-inner{background:var(--white);border:0.5px solid var(--border);border-radius:16px;width:92%;max-width:480px;max-height:80vh;overflow-y:auto;padding:20px}
-.day-modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.day-modal-title{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px}
-.day-modal-close{width:26px;height:26px;border-radius:50%;border:0.5px solid var(--border);background:none;cursor:pointer;font-size:13px;color:var(--muted)}
-.day-block-item{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:0.5px solid var(--border);font-size:13px;font-weight:300}
-.day-block-item:last-child{border-bottom:none}
-.day-block-bar{width:3px;height:32px;border-radius:2px;flex-shrink:0}
-/* PROJECTS */
-.proj-list{display:flex;flex-direction:column;gap:6px}
-.proj-row{display:flex;align-items:center;gap:10px;border:0.5px solid var(--border);border-radius:10px;padding:10px 14px;background:var(--white)}
-.proj-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.proj-name{font-size:13px;font-weight:300;flex:1}
-.proj-tag{font-size:10px;padding:3px 8px;border-radius:20px;white-space:nowrap}
-.proj-note{font-size:11px;color:var(--muted);text-align:right;min-width:70px}
-.roadmap-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:0.5px solid var(--border)}
-.roadmap-row:last-child{border-bottom:none}
-/* SETTINGS */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(250,250,246,.9);z-index:200;align-items:center;justify-content:center}
-.modal-overlay.open{display:flex}
-.modal{background:var(--white);border:0.5px solid var(--border);border-radius:16px;width:92%;max-width:520px;max-height:88vh;overflow-y:auto;padding:24px}
-.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
-.modal-title{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px}
-.modal-close{width:28px;height:28px;border-radius:50%;border:0.5px solid var(--border);background:none;cursor:pointer;font-size:14px;color:var(--muted)}
-.modal-sec{margin-bottom:18px}
-.modal-sec-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
-.edit-row{display:flex;align-items:center;gap:6px;margin-bottom:6px}
-.edit-input{flex:1;border:0.5px solid var(--border);border-radius:7px;padding:7px 10px;font-size:12px;font-weight:300;font-family:'DM Sans',sans-serif;background:var(--ivory);color:var(--text);outline:none;min-width:0}
-.edit-input:focus{border-color:var(--mint)}
-.color-pick{width:32px;height:32px;border-radius:7px;border:0.5px solid var(--border);padding:2px;cursor:pointer;flex-shrink:0}
-.del-btn{width:26px;height:26px;border-radius:50%;border:0.5px solid var(--border);background:none;cursor:pointer;font-size:12px;color:var(--muted);flex-shrink:0;transition:all .15s}
-.del-btn:hover{border-color:#E24B4A;color:#E24B4A}
-.add-btn{width:100%;border:0.5px dashed var(--border);border-radius:8px;padding:8px;font-size:12px;font-weight:300;font-family:'DM Sans',sans-serif;color:var(--muted);background:none;cursor:pointer;transition:all .15s}
-.add-btn:hover{border-color:var(--mint);color:var(--mint-dark)}
-.save-btn{width:100%;border:0.5px solid var(--mint);border-radius:8px;padding:10px;font-size:13px;font-weight:300;font-family:'DM Sans',sans-serif;color:var(--mint-dark);background:var(--mint-light);cursor:pointer;margin-top:6px}
-.save-btn:hover{background:var(--mint);color:#fff}
-.gcal-hint{font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:8px}
-@media(max-width:600px){
-  .cd-num{font-size:28px}
-  .tabs .tab{padding:8px 8px 12px;font-size:10px}
-  .page{padding:10px}
-  /* monthly calendar mobile fix */
-  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr)}
-  .cal-day{min-height:60px;height:60px;padding:4px 3px;overflow:hidden}
-  .cal-dow{font-size:9px;padding:6px 0}
-  .day-num{font-size:10px;width:18px;height:18px}
-  .day-event{font-size:8px;padding:1px 3px;margin-bottom:1px}
-  .leg-dot{width:5px;height:5px}
-  /* habit grid mobile: 1 column */
-  .habit-list{grid-template-columns:1fr}
-  /* circle row mobile */
-  .circle-row{gap:2px}
-  .day-col{gap:3px}
-  /* nav */
-  .nav-arrow-btn{width:32px;height:32px}
-  /* weekly grid */
-  .week-grid{grid-template-columns:36px repeat(7,1fr)}
-}
-/* TOGGLE SECTION */
-.toggle-section{margin-bottom:1.4rem}
-.toggle-header{display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 0;user-select:none}
-.toggle-arrow{font-size:10px;color:var(--muted);transition:transform .2s;flex-shrink:0;display:inline-block}
-.toggle-arrow.open{transform:rotate(90deg)}
-.toggle-title{font-size:10px;font-weight:400;letter-spacing:.15em;color:var(--muted);text-transform:uppercase}
-.toggle-body{overflow:hidden}
-.toggle-body.collapsed{display:none}
-/* NOTION EDITOR */
-.notion-list{display:flex;flex-direction:column;gap:1px;padding:4px 0}
-.notion-row{display:flex;align-items:flex-start;gap:6px;padding:3px 4px;border-radius:6px;position:relative;transition:background .1s}
-.notion-row:hover{background:rgba(44,44,42,.04)}
-.notion-row.dragging-row{opacity:.35}
-.notion-row.drag-over-top{border-top:2px solid var(--mint)}
-.drag-handle{font-size:12px;color:rgba(136,135,128,.25);cursor:grab;padding-top:3px;flex-shrink:0;opacity:0;transition:opacity .1s;line-height:1}
-.notion-row:hover .drag-handle{opacity:1}
-.notion-cell{flex:1;min-width:0;outline:none;font-size:13px;font-weight:300;font-family:'DM Sans',sans-serif;line-height:1.6;border:none;background:none;padding:0;word-break:break-word;white-space:pre-wrap;cursor:text}
-.notion-cell:empty::before{content:attr(data-placeholder);color:rgba(136,135,128,.35);pointer-events:none}
-.notion-toolbar{display:none;position:absolute;right:4px;top:0px;gap:3px;background:var(--white);border:0.5px solid var(--border);border-radius:7px;padding:3px 6px;z-index:10;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.notion-row:focus-within .notion-toolbar,.notion-row:hover .notion-toolbar{display:flex}
-.toolbar-btn{font-size:11px;background:none;border:none;cursor:pointer;color:var(--muted);padding:2px 4px;border-radius:4px;font-family:'DM Sans',sans-serif;transition:background .1s;line-height:1}
-.toolbar-btn:hover{background:rgba(44,44,42,.06);color:var(--text)}
-/* TODO */
-.todo-list{display:flex;flex-direction:column;gap:2px;padding:4px 0}
-.todo-row{display:flex;align-items:flex-start;gap:8px;padding:4px 6px;border-radius:6px;position:relative}
-.todo-row:hover{background:rgba(44,44,42,.04)}
-.todo-row.dragging-row{opacity:.35}
-.todo-row.drag-over-top{border-top:2px solid var(--mint)}
-.todo-cb{width:16px;height:16px;border-radius:4px;border:1px solid var(--border);flex-shrink:0;margin-top:3px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;color:transparent;transition:all .15s}
-.todo-cb.done{background:var(--mint);border-color:var(--mint);color:#fff}
-.todo-text{flex:1;outline:none;font-size:13px;font-weight:300;font-family:'DM Sans',sans-serif;line-height:1.6;border:none;background:none;padding:0;min-width:0;cursor:text}
-.todo-text:empty::before{content:'Add task...';color:rgba(136,135,128,.35);pointer-events:none}
-.todo-drag{font-size:12px;color:rgba(136,135,128,.25);cursor:grab;padding-top:3px;flex-shrink:0;opacity:0;transition:opacity .1s}
-.todo-row:hover .todo-drag{opacity:1}
-.todo-del{opacity:0;background:none;border:none;cursor:pointer;font-size:11px;color:var(--muted);padding:0 2px;flex-shrink:0;margin-top:2px}
-.todo-row:hover .todo-del{opacity:.4}
-.section-card{border:0.5px solid var(--border);border-radius:12px;padding:12px 14px;background:var(--white)}
-/* PALETTE POPUP */
-.daily-date-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding:0 2px}
-.daily-date-label{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;color:var(--text)}
-.daily-date-sub{font-size:10px;color:var(--muted);letter-spacing:.06em;margin-top:1px}
-.nav-arrow-btn{width:28px;height:28px;border-radius:50%;border:0.5px solid var(--border);background:none;cursor:pointer;font-size:13px;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
-.nav-arrow-btn:hover{border-color:var(--mint);color:var(--mint-dark)}
-/* drag-to-spin date input */
-.spin-date-wrap{position:relative;display:inline-flex;align-items:center;gap:4px}
-.spin-date-wrap input[type=date]{cursor:ns-resize}
-.palette-popup{position:fixed;z-index:200;background:var(--white);border:0.5px solid var(--border);border-radius:12px;padding:8px;box-shadow:0 4px 16px rgba(0,0,0,.1);display:grid;grid-template-columns:repeat(5,1fr);gap:5px;width:194px}
-.palette-swatch{width:28px;height:28px;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:transform .1s,border-color .1s}
-.palette-swatch:hover{transform:scale(1.1)}
-.palette-swatch.active{border-color:rgba(44,44,42,.5)}
+body{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:hidden;font-size:14px}
+.sidebar{width:var(--sidebar-w);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.sidebar-logo{padding:20px 16px 12px;border-bottom:1px solid var(--border)}
+.logo-badge{background:linear-gradient(135deg,#FF6B9D,#6C63FF);color:#fff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;display:inline-block;margin-bottom:6px}
+.logo-title{font-size:16px;font-weight:800}.logo-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;margin:2px 8px;transition:all .15s;color:var(--muted);font-size:13px;font-weight:500}
+.nav-item:hover{background:#F3F3F8;color:var(--text)}
+.nav-item.active{background:var(--accent-light);color:var(--accent);font-weight:700}
+.nav-icon{font-size:18px;width:22px;text-align:center}
+.sidebar-footer{margin-top:auto;padding:16px;border-top:1px solid var(--border);font-size:11px;color:var(--muted)}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;gap:12px;height:56px;flex-shrink:0}
+.topbar-title{font-size:16px;font-weight:800}.topbar-sub{font-size:12px;color:var(--muted)}
+.refresh-btn{margin-left:auto;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:600;color:var(--muted);transition:all .15s}
+.refresh-btn:hover{border-color:var(--accent);color:var(--accent)}
+.api-banner{background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;margin:16px 24px 0;padding:12px 16px;display:flex;align-items:center;gap:10px;font-size:13px;color:#92400E;flex-shrink:0}
+.api-banner-btn{margin-left:auto;background:#F59E0B;color:#fff;border:none;border-radius:8px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:700;white-space:nowrap}
+.api-banner.hidden{display:none}
+.content{flex:1;overflow-y:auto;padding:0 24px 24px}
+.page{display:none}.page.active{display:block}
+.filter-bar{display:flex;align-items:center;gap:6px;padding:16px 0 10px;flex-wrap:wrap}
+.filter-group{display:flex;gap:4px}
+.filter-divider{width:1px;height:28px;background:var(--border);margin:0 4px;align-self:center}
+.ftab{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:12px;font-weight:600;color:var(--muted);transition:all .15s;white-space:nowrap}
+.ftab:hover{border-color:var(--accent);color:var(--accent)}
+.ftab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.ftab.active2{background:var(--accent2);color:#fff;border-color:var(--accent2)}
+.status-pills{display:flex;gap:6px}
+.spill{display:flex;align-items:center;gap:4px;padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--surface);font-size:12px;font-weight:600}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.dot-blue{background:#3B82F6}.dot-green{background:#22C55E}.dot-red{background:#EF4444}.dot-gray{background:#9CA3AF}
+.result-count{margin-left:auto;font-size:12px;color:var(--muted);font-weight:500;white-space:nowrap}
+.cat-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.video-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:8px}
+.video-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;cursor:pointer;transition:all .2s;position:relative}
+.video-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(108,99,255,0.1);border-color:var(--accent)}
+.thumb-wrap{width:100%;aspect-ratio:16/9;position:relative;overflow:hidden;background:#E5E5EF;display:flex;align-items:center;justify-content:center}
+.thumb-wrap img{width:100%;height:100%;object-fit:cover;display:block;position:absolute;top:0;left:0}
+.thumb-ph{font-size:32px;z-index:0}
+.rank-badge{position:absolute;top:8px;left:8px;background:rgba(0,0,0,0.75);color:#fff;font-size:11px;font-weight:800;padding:3px 7px;border-radius:6px;z-index:2}
+.shorts-badge{position:absolute;top:8px;right:8px;background:var(--accent2);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;z-index:2}
+.star-btn{position:absolute;bottom:8px;right:8px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.92);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .15s;z-index:2}
+.star-btn:hover{transform:scale(1.1)}
+.status-tag{position:absolute;top:8px;left:40px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;z-index:2}
+.tag-new{background:#EFF6FF;color:#1D4ED8}.tag-up{background:#F0FDF4;color:#15803D}
+.tag-down{background:#FEF2F2;color:#B91C1C}.tag-keep{background:#F9FAFB;color:#6B7280}
+.video-info{padding:12px}
+.video-title{font-size:13px;font-weight:600;line-height:1.4;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.video-meta{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.ch-avatar{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
+.ch-name{font-size:11px;color:var(--muted);font-weight:500}
+.ch-views{font-size:11px;color:var(--muted)}
+.velocity-row{display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid var(--border)}
+.velocity{font-size:13px;font-weight:700;color:var(--green)}
+.copy-btn{background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;padding:2px}
+.copy-btn:hover{color:var(--accent)}
+.search-box{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-top:16px;transition:all .2s}
+.search-box:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,99,255,0.1)}
+.search-box input{flex:1;border:none;outline:none;font-size:14px;color:var(--text);background:transparent}
+.search-box input::placeholder{color:var(--muted)}
+.filter-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:16px}
+.filter-select-wrap{display:flex;flex-direction:column;gap:6px}
+.filter-label{font-size:11px;color:var(--muted);font-weight:600}
+.filter-select{border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text);background:var(--surface);cursor:pointer;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238888A0' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+.filter-select:focus{border-color:var(--accent)}
+.search-cta{margin-top:16px;width:100%;padding:16px;background:linear-gradient(135deg,#6C63FF,#FF6B9D);color:#fff;border:none;border-radius:var(--radius);font-size:15px;font-weight:800;cursor:pointer;transition:all .2s}
+.search-cta:hover{opacity:0.9;transform:translateY(-1px)}
+.rank-table{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;margin-top:4px}
+.rank-table table{width:100%;border-collapse:collapse}
+.rank-table thead tr{border-bottom:1px solid var(--border);background:#FAFAFA}
+.rank-table thead th{padding:11px 16px;text-align:left;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.05em}
+.rank-table tbody tr{border-bottom:1px solid var(--border);transition:background .15s;cursor:pointer}
+.rank-table tbody tr:last-child{border-bottom:none}
+.rank-table tbody tr:hover{background:#F7F7FF}
+.rank-table td{padding:12px 16px;font-size:13px}
+.rank-num{font-size:15px;font-weight:800;color:var(--muted);width:40px}
+.top1{color:#F59E0B}.top2{color:#9CA3AF}.top3{color:#CD7C3A}
+.rank-ch{display:flex;align-items:center;gap:10px}
+.rank-avatar{width:60px;height:34px;border-radius:4px;object-fit:cover;flex-shrink:0;background:#E5E5EF}
+.rank-ch-name{font-weight:600;font-size:13px;max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rank-ch-sub{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:#EEF0FF;color:var(--accent);margin-top:2px;display:inline-block}
+.rank-stat{font-size:13px;font-weight:700}
+.section-label{font-size:12px;color:var(--muted);font-weight:700;margin-bottom:10px;margin-top:20px}
+.topic-tags{display:flex;flex-wrap:wrap;gap:8px}
+.topic-tag{padding:8px 18px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);transition:all .15s}
+.topic-tag:hover{border-color:var(--accent);color:var(--accent)}
+.topic-tag.active{color:#fff;border-color:transparent}
+.type-tabs,.sub-group{display:flex;gap:8px;flex-wrap:wrap}
+.type-tab,.sub-tab{padding:8px 20px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);transition:all .15s}
+.type-tab:hover,.sub-tab:hover{border-color:var(--accent);color:var(--accent)}
+.type-tab.active,.sub-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.sub-filters{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:4px}
+.api-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:24px;margin-top:16px;max-width:560px}
+.api-card h3{font-size:15px;font-weight:700;margin-bottom:6px}
+.api-card p{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px}
+.api-input-row{display:flex;gap:8px}
+.api-input{flex:1;border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--text);outline:none;transition:all .2s}
+.api-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,99,255,0.1)}
+.api-save-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 18px;cursor:pointer;font-size:13px;font-weight:700}
+.api-save-btn:hover{opacity:.9}
+.api-tip{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.7;padding:10px 14px;background:#F7F7FA;border-radius:8px}
+.api-tip a{color:var(--accent);text-decoration:none}
+.api-status{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13px}
+.api-dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.api-dot.ok{background:var(--green)}.api-dot.err{background:var(--red)}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;gap:12px}
+.empty-icon{font-size:48px}.empty-title{font-size:16px;font-weight:700}.empty-sub{font-size:13px;color:var(--muted);text-align:center}
+.loading{display:flex;align-items:center;justify-content:center;padding:60px;gap:12px;color:var(--muted);font-size:14px}
+.spinner{width:24px;height:24px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:24px;right:24px;background:#1A1A2E;color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:500;z-index:9999;transform:translateY(80px);opacity:0;transition:all .3s}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* GOLDEN CARD */
+.golden-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:8px}
+.golden-card{background:#1A1A2E;border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all .2s;position:relative;color:#fff}
+.golden-card:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(108,99,255,0.25)}
+.gc-thumb{width:100%;aspect-ratio:16/9;position:relative;overflow:hidden;background:#0D0D1A;display:flex;align-items:center;justify-content:center}
+.gc-thumb img{width:100%;height:100%;object-fit:cover;display:block;position:absolute;top:0;left:0;opacity:0.85}
+.gc-thumb-ph{font-size:32px;z-index:0}
+.gc-rank{position:absolute;top:8px;left:8px;background:rgba(0,0,0,0.75);color:#fff;font-size:11px;font-weight:800;padding:3px 7px;border-radius:6px;z-index:2}
+.gc-shorts{position:absolute;top:8px;right:8px;background:var(--accent2);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;z-index:2}
+.gc-star{position:absolute;bottom:8px;right:8px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.15);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;z-index:2;transition:all .15s}
+.gc-star:hover{background:rgba(255,255,255,0.3)}
+.gc-body{padding:12px}
+.gc-title{font-size:13px;font-weight:600;line-height:1.4;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:#F0F0FF}
+.gc-ch{display:flex;align-items:center;gap:6px;margin-bottom:10px}
+.gc-ch-dot{width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0}
+.gc-ch-name{font-size:11px;color:#A0A0C0;font-weight:500}
+.gc-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px}
+.gc-stat{background:rgba(255,255,255,0.06);border-radius:8px;padding:7px 8px;text-align:center}
+.gc-stat-label{font-size:9px;color:#6060A0;font-weight:600;margin-bottom:3px;letter-spacing:0.03em}
+.gc-stat-val{font-size:13px;font-weight:800;color:#E0E0FF}
+.gc-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid rgba(255,255,255,0.08)}
+.gc-vel{font-size:12px;font-weight:700;color:#F59E0B;display:flex;align-items:center;gap:3px}
+.gc-vel-bar{height:3px;background:rgba(255,255,255,0.1);border-radius:2px;margin-top:4px;overflow:hidden}
+.gc-vel-fill{height:100%;background:linear-gradient(90deg,#F59E0B,#FF6B9D);border-radius:2px;transition:width .4s}
+.gc-copy{background:none;border:none;cursor:pointer;color:#6060A0;font-size:14px;padding:2px}
+.gc-copy:hover{color:#A0A0FF}
+.golden-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.golden-count{font-size:13px;color:var(--muted);font-weight:500}
+.golden-update{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px}
+
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
 </style>
 </head>
 <body>
-<nav class="nav">
-  <div class="logo">Loom</div>
-  <div class="tabs">
-    <button class="tab active" onclick="switchTab('daily')">Daily</button>
-    <button class="tab" onclick="switchTab('weekly')">Weekly</button>
-    <button class="tab" onclick="switchTab('monthly')">Monthly</button>
-    <button class="tab" onclick="switchTab('projects')">Projects</button>
-  </div>
-  <div class="nav-right">
-    <div class="date-badge" id="dateStr"></div>
-    <button class="settings-btn" onclick="openSettings()">⚙</button>
-  </div>
-</nav>
 
-<!-- DAILY -->
-<div class="page active" id="page-daily">
-  <div class="daily-date-nav">
-    <button class="nav-arrow-btn" onclick="shiftDailyDate(-1)">←</button>
-    <div style="text-align:center">
-      <div class="daily-date-label" id="dailyDateLabel"></div>
-      <div class="daily-date-sub" id="dailyDateSub"></div>
-    </div>
-    <button class="nav-arrow-btn" onclick="shiftDailyDate(1)">→</button>
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-badge">🛍 CELEB</div>
+    <div class="logo-title">셀럽템 파인더</div>
+    <div class="logo-sub">연예인 쇼핑쇼츠 발굴기</div>
   </div>
-  <div class="cd-grid" id="cdGrid"></div>
-
-  <!-- THIS WEEK (toggleable) -->
-  <div class="toggle-section">
-    <div class="toggle-header" onclick="toggleSection('focus')">
-      <span class="toggle-arrow open" id="arrow-focus">▶</span>
-      <span class="toggle-title">This week</span>
-    </div>
-    <div class="toggle-body" id="body-focus">
-      <div class="section-card">
-        <div class="focus-week" id="focusWeekLabel"></div>
-        <div class="notion-list" id="focusList"></div>
-        <button class="small-btn" onclick="addFocusItem()">+ Add item</button>
-      </div>
-    </div>
+  <div style="padding:8px 0 4px">
+    <div class="nav-item" data-page="golden" onclick="navigate('golden')"><span class="nav-icon">📊</span> 황금 채널 발굴기</div>
+    <div class="nav-item" data-page="search" onclick="navigate('search')"><span class="nav-icon">🔍</span> 셀럽템 검색</div>
+    <div class="nav-item active" data-page="trending" onclick="navigate('trending')"><span class="nav-icon">🛍</span> 연예인 쇼핑쇼츠</div>
+    <div class="nav-item" data-page="ranking" onclick="navigate('ranking')"><span class="nav-icon">📈</span> 채널 랭킹</div>
+    <div class="nav-item" data-page="favorites" onclick="navigate('favorites')"><span class="nav-icon">⭐</span> 즐겨찾기</div>
+    <div style="height:1px;background:var(--border);margin:8px 16px"></div>
+    <div class="nav-item" data-page="apikey" onclick="navigate('apikey')"><span class="nav-icon">🔑</span> YouTube API 키 설정</div>
+    <div class="nav-item" data-page="subs" onclick="navigate('subs')"><span class="nav-icon">👥</span> 구독 관리</div>
   </div>
+  <div class="sidebar-footer">v3.0.0 · 셀럽템 파인더</div>
+</aside>
 
-  <!-- TODO (toggleable) -->
-  <div class="toggle-section">
-    <div class="toggle-header" onclick="toggleSection('todo')">
-      <span class="toggle-arrow open" id="arrow-todo">▶</span>
-      <span class="toggle-title">To-do</span>
-    </div>
-    <div class="toggle-body" id="body-todo">
-      <div class="section-card">
-        <div class="todo-list" id="todoList"></div>
-        <button class="small-btn" onclick="addTodo()">+ Add task</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- TIME BLOCKS (toggleable) -->
-  <div class="toggle-section">
-    <div class="toggle-header" onclick="toggleSection('tb')">
-      <span class="toggle-arrow open" id="arrow-tb">▶</span>
-      <span class="toggle-title">Time Blocks</span>
-    </div>
-    <div class="toggle-body" id="body-tb">
-      <div class="tb-header" style="margin-bottom:8px">
-        <div style="display:flex;align-items:center;gap:4px">
-          <button class="nav-arrow-btn" onclick="shiftTBDate(-1)">←</button>
-          <input type="date" id="tbDatePicker" class="spin-date-input" style="border:0.5px solid var(--border);border-radius:7px;padding:4px 8px;font-size:11px;font-weight:300;font-family:'DM Sans',sans-serif;background:var(--ivory);color:var(--text);outline:none;cursor:ns-resize">
-          <button class="nav-arrow-btn" onclick="shiftTBDate(1)">→</button>
-          <button onclick="setTBDate(0)" style="font-size:10px;color:var(--muted);background:none;border:0.5px solid var(--border);border-radius:6px;padding:3px 8px;cursor:pointer;font-family:'DM Sans',sans-serif;margin-left:2px">Today</button>
-        </div>
-
-      </div>
-      <div class="tb-legend" id="tbLegend"></div>
-      <div class="timeline-wrap">
-        <div class="time-col" id="timeCol"></div>
-        <div class="blocks-col" id="blocksCol"><div class="empty-hint" id="emptyHint">Drag to add a block<br><span style="font-size:10px;opacity:.6">double-click to cancel</span></div></div>
-      </div>
-      <div class="cat-picker" id="catPicker" style="display:none">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-          <div class="cat-picker-title" id="pickerTitle" style="margin:0">Select category</div>
-          <div id="pickerTimeRange" style="font-size:11px;color:var(--mint-dark);font-weight:400"></div>
-        </div>
-        <div class="cat-grid" id="catGrid"></div>
-        <div class="name-row">
-          <input class="name-input" id="blockName" placeholder="Label (optional)">
-          <button class="cancel-btn" onclick="cancelBlock()">Cancel</button>
-          <button class="confirm-btn" onclick="confirmBlock()">Add</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- HABITS -->
-  <div class="toggle-section">
-    <div class="toggle-header" onclick="toggleSection('habits')">
-      <span class="toggle-arrow open" id="arrow-habits">▶</span>
-      <span class="toggle-title">Habits</span>
-    </div>
-    <div class="toggle-body" id="body-habits">
-      <div class="habit-list" id="habitList"></div>
-      <div class="circle-row" id="circleRow"></div>
-      <div class="legend-wrap" id="habitLegend"></div>
-    </div>
-  </div>
-
-  <div class="section" id="gcalSection" style="display:none">
-    <div class="sec-label">Google Calendar</div>
-    <div style="border:0.5px solid var(--border);border-radius:12px;overflow:hidden">
-      <div style="font-size:11px;color:var(--muted);padding:8px 14px;border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between"><span>My Calendar</span><a href="https://calendar.google.com" target="_blank" style="color:var(--mint-dark);text-decoration:none;font-size:11px">Open →</a></div>
-      <iframe id="gcalFrame" style="width:100%;height:460px;border:none;display:block" src=""></iframe>
-    </div>
-  </div>
-</div>
-
-<!-- WEEKLY -->
-<div class="page" id="page-weekly">
-  <div class="week-nav">
+<div class="main">
+  <div class="topbar">
     <div>
-      <div class="sec-label" style="margin:0">Weekly Plan</div>
-      <div class="week-range" id="weekRange"></div>
+      <div class="topbar-title" id="topbar-title">🛍 연예인 쇼핑쇼츠 급등</div>
+      <div class="topbar-sub" id="topbar-sub">최근 업로드 + 조회수 폭발 중인 연예인 템 쇼츠</div>
     </div>
-    <div style="display:flex;gap:6px">
-      <button class="cal-nav-btn" onclick="shiftWeek(-1)">←</button>
-      <button class="cal-nav-btn" onclick="shiftWeek(0)">Today</button>
-      <button class="cal-nav-btn" onclick="shiftWeek(1)">→</button>
-    </div>
+    <button class="refresh-btn" onclick="loadCurrentPage()">↻ 새로고침</button>
   </div>
-  <div class="week-grid-wrap"><div class="week-grid" id="weekGrid"></div></div>
-</div>
+  <div id="api-banner" class="api-banner">
+    <span>⚠️</span>
+    <span><strong>YouTube API 키가 없습니다.</strong> 연예인 쇼핑쇼츠 실제 데이터를 보려면 API 키를 등록해 주세요.</span>
+    <button class="api-banner-btn" onclick="navigate('apikey')">⚙ 키 등록하기</button>
+  </div>
+  <div class="content">
 
-<!-- MONTHLY -->
-<div class="page" id="page-monthly">
-  <div class="section">
-    <div class="cal-wrap">
-      <div class="cal-header">
-        <div class="cal-title" id="calMonthTitle"></div>
-        <div class="cal-nav">
-          <button class="cal-nav-btn" onclick="shiftMonth(-1)">←</button>
-          <button class="cal-nav-btn" onclick="shiftMonth(0)">Today</button>
-          <button class="cal-nav-btn" onclick="shiftMonth(1)">→</button>
+    <!-- 연예인 쇼핑쇼츠 -->
+    <div class="page active" id="page-trending">
+      <div class="filter-bar">
+        <div class="filter-group">
+          <button class="ftab active2" data-group="celebcat" data-val="연예인 추천템 #shorts" onclick="setFilter('celebcat',this);loadTrending()">⭐ 추천템</button>
+          <button class="ftab" data-group="celebcat" data-val="연예인 명품템 #shorts" onclick="setFilter('celebcat',this);loadTrending()">💎 명품템</button>
+          <button class="ftab" data-group="celebcat" data-val="연예인 쇼핑 하울 #shorts" onclick="setFilter('celebcat',this);loadTrending()">🛍 하울</button>
+          <button class="ftab" data-group="celebcat" data-val="아이돌 착용템 #shorts" onclick="setFilter('celebcat',this);loadTrending()">🎤 아이돌템</button>
+          <button class="ftab" data-group="celebcat" data-val="연예인 패션 #shorts" onclick="setFilter('celebcat',this);loadTrending()">👗 패션</button>
+          <button class="ftab" data-group="celebcat" data-val="연예인 뷰티 #shorts" onclick="setFilter('celebcat',this);loadTrending()">💄 뷰티</button>
+          <button class="ftab" data-group="celebcat" data-val="셀럽 가방 신발 #shorts" onclick="setFilter('celebcat',this);loadTrending()">👜 가방·신발</button>
+        </div>
+        <div class="filter-divider"></div>
+        <div class="filter-group">
+          <button class="ftab active" data-group="tsort" data-val="hot" onclick="setFilter('tsort',this);loadTrending()">🔥 최근+조회수</button>
+          <button class="ftab" data-group="tsort" data-val="viewCount" onclick="setFilter('tsort',this);loadTrending()">👁 조회수순</button>
+          <button class="ftab" data-group="tsort" data-val="date" onclick="setFilter('tsort',this);loadTrending()">🕐 최신순</button>
+        </div>
+        <div class="filter-divider"></div>
+        <div class="filter-group">
+          <button class="ftab active" data-group="tregion" data-val="KR" onclick="setFilter('tregion',this);loadTrending()">🇰🇷 한국</button>
+          <button class="ftab" data-group="tregion" data-val="JP" onclick="setFilter('tregion',this);loadTrending()">🇯🇵 일본</button>
+          <button class="ftab" data-group="tregion" data-val="US" onclick="setFilter('tregion',this);loadTrending()">🇺🇸 미국</button>
+          <button class="ftab" data-group="tregion" data-val="GB" onclick="setFilter('tregion',this);loadTrending()">🇬🇧 영국</button>
+          <button class="ftab" data-group="tregion" data-val="FR" onclick="setFilter('tregion',this);loadTrending()">🇫🇷 프랑스</button>
+        </div>
+        <div class="filter-divider"></div>
+        <div class="status-pills">
+          <span class="spill"><span class="dot dot-blue"></span>신규 <span id="cnt-new">-</span></span>
+          <span class="spill"><span class="dot dot-green"></span>상승 <span id="cnt-up">-</span></span>
+          <span class="spill"><span class="dot dot-red"></span>하락 <span id="cnt-down">-</span></span>
+          <span class="spill"><span class="dot dot-gray"></span>유지 <span id="cnt-keep">-</span></span>
+        </div>
+        <div class="result-count" id="result-count">-</div>
+      </div>
+      <div class="cat-bar">
+        <span style="font-size:11px;color:var(--muted);font-weight:700;align-self:center;margin-right:4px">업로드</span>
+        <button class="ftab active" data-group="tperiod" data-val="3" onclick="setFilter('tperiod',this);loadTrending()">3일 이내</button>
+        <button class="ftab" data-group="tperiod" data-val="7" onclick="setFilter('tperiod',this);loadTrending()">1주일</button>
+        <button class="ftab" data-group="tperiod" data-val="30" onclick="setFilter('tperiod',this);loadTrending()">1개월</button>
+        <div style="width:1px;height:20px;background:var(--border);margin:0 4px;align-self:center"></div>
+        <span style="font-size:11px;color:var(--muted);font-weight:700;align-self:center;margin-right:4px">최소 조회수</span>
+        <button class="ftab active" data-group="tminviews" data-val="0" onclick="setFilter('tminviews',this);loadTrending()">제한없음</button>
+        <button class="ftab" data-group="tminviews" data-val="10000" onclick="setFilter('tminviews',this);loadTrending()">1만+</button>
+        <button class="ftab" data-group="tminviews" data-val="100000" onclick="setFilter('tminviews',this);loadTrending()">10만+</button>
+        <button class="ftab" data-group="tminviews" data-val="500000" onclick="setFilter('tminviews',this);loadTrending()">50만+</button>
+      </div>
+      <div id="trending-grid"><div class="loading"><div class="spinner"></div> 불러오는 중...</div></div>
+    </div>
+
+    <!-- 조회수 폭발 쇼츠 -->
+    <div class="page" id="page-search">
+      <div class="search-box">
+        <span style="font-size:18px;color:var(--muted)">🔍</span>
+        <input type="text" id="search-input" placeholder="검색어 입력 (예: 연예인 명품템, 아이돌 추천 가방, 셀럽 뷰티...)" onkeydown="if(event.key==='Enter')doSearch()">
+      </div>
+      <div class="filter-row">
+        <div class="filter-select-wrap">
+          <div class="filter-label">📅 업로드 일자</div>
+          <select class="filter-select" id="f-date">
+            <option value="today">오늘</option>
+            <option value="week">최근 1주일</option>
+            <option value="month" selected>최근 1개월</option>
+            <option value="3month">최근 3개월</option>
+          </select>
+        </div>
+        <div class="filter-select-wrap">
+          <div class="filter-label">👀 최소 조회수</div>
+          <select class="filter-select" id="f-views">
+            <option value="0">제한 없음</option>
+            <option value="30000">3만회 이상</option>
+            <option value="100000">10만회 이상</option>
+            <option value="300000">30만회 이상</option>
+            <option value="1000000">100만회 이상</option>
+          </select>
+        </div>
+        <div class="filter-select-wrap">
+          <div class="filter-label">👥 최대 구독자</div>
+          <select class="filter-select" id="f-maxsubs">
+            <option value="0">제한 없음</option>
+            <option value="10000">1만 명 이하</option>
+            <option value="50000">5만 명 이하</option>
+            <option value="100000">10만 명 이하</option>
+            <option value="1000000">100만 명 이하</option>
+          </select>
+        </div>
+        <div class="filter-select-wrap">
+          <div class="filter-label">📐 영상 길이</div>
+          <select class="filter-select" id="f-dur">
+            <option value="any" selected>전체</option>
+            <option value="short">쇼츠 (60초 이하)</option>
+            <option value="medium">중간 (4~20분)</option>
+            <option value="long">롱폼 (20분+)</option>
+          </select>
+        </div>
+        <div class="filter-select-wrap">
+          <div class="filter-label">↕ 정렬</div>
+          <select class="filter-select" id="f-sort">
+            <option value="viewCount">조회수 높은순</option>
+            <option value="date">최신순</option>
+            <option value="rating">평점순</option>
+          </select>
         </div>
       </div>
-      <div class="cal-grid" id="calGrid"></div>
+      <button class="search-cta" onclick="doSearch()">🚀 셀럽템 쇼츠 발굴 시작</button>
+      <div id="search-results" style="margin-top:20px"></div>
     </div>
-  </div>
-</div>
 
-<!-- PROJECTS -->
-<div class="page" id="page-projects">
-  <div class="section">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-      <div class="sec-label" style="margin:0">Projects</div>
-      <button class="small-btn" style="padding:0" onclick="openSettings()">Edit →</button>
-    </div>
-    <div class="proj-list" id="projList"></div>
-  </div>
-  <div class="section">
-    <div class="sec-label">Milestones</div>
-    <div style="border:0.5px solid var(--border);border-radius:12px;padding:16px;background:var(--white)" id="epRoadmap"></div>
-  </div>
-</div>
-
-<!-- DAY DETAIL MODAL -->
-<div class="day-modal" id="dayModal">
-  <div class="day-modal-inner">
-    <div class="day-modal-header">
-      <div class="day-modal-title" id="dayModalTitle"></div>
-      <button class="day-modal-close" onclick="closeDayModal()">✕</button>
-    </div>
-    <div id="dayModalContent"></div>
-  </div>
-</div>
-
-<!-- SETTINGS -->
-<div class="modal-overlay" id="settingsModal">
-  <div class="modal">
-    <div class="modal-header"><div class="modal-title">설정</div><button class="modal-close" onclick="closeSettings()">✕</button></div>
-    <div class="modal-sec"><div class="modal-sec-label">Habits</div><div id="habitEditList"></div><button class="add-btn" onclick="addHabit()">+ Add habit</button></div>
-    <div class="modal-sec"><div class="modal-sec-label">Projects</div><div id="projEditList"></div><button class="add-btn" onclick="addProject()">+ Add project</button></div>
-    <div class="modal-sec"><div class="modal-sec-label">EP Milestones</div><div id="msEditList"></div><button class="add-btn" onclick="addMilestone()">+ Add milestone</button></div>
-    <div class="modal-sec">
-      <div class="modal-sec-label">Google Calendar</div>
-      <p class="gcal-hint">Google Calendar → 설정 → 캘린더 선택 → 공개 URL 복사</p>
-      <input class="edit-input" id="gcalUrlInput" placeholder="https://calendar.google.com/calendar/embed?src=..." style="width:100%">
-    </div>
-    <button class="save-btn" onclick="saveSettings()">저장하기</button>
-  </div>
-</div>
-
-<script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getDatabase, ref, set, get, onValue } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
-import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-
-const firebaseConfig = window._firebaseConfig || null;
-let db = null, auth = null, UID = null;
-
-if(firebaseConfig){
-  try{
-    const app=initializeApp(firebaseConfig);
-    db=getDatabase(app);
-    auth=getAuth(app);
-  }catch(e){console.warn('Firebase init failed',e);}
-}
-
-// ── LOGIN UI ──
-function showLoginScreen(){
-  if(document.getElementById('loginOverlay'))return;
-  const overlay=document.createElement('div');
-  overlay.id='loginOverlay';
-  overlay.style.cssText='position:fixed;inset:0;background:var(--ivory);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px';
-  overlay.innerHTML=`
-    <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:36px;color:var(--text)">Loom</div>
-    <div style="font-size:13px;font-weight:300;color:var(--muted);font-family:'DM Sans',sans-serif">나만의 스케줄 대시보드</div>
-    <button id="googleLoginBtn" style="display:flex;align-items:center;gap:10px;border:0.5px solid var(--border);border-radius:10px;padding:12px 24px;background:var(--white);cursor:pointer;font-size:13px;font-weight:300;font-family:'DM Sans',sans-serif;color:var(--text);margin-top:8px;transition:border-color .15s">
-      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.8 2.5 30.2 0 24 0 14.6 0 6.6 5.4 2.6 13.3l7.8 6C12.3 13 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4 6.9-10 6.9-17z"/><path fill="#FBBC05" d="M10.4 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.9-4.7l-7.8-6A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.7l7.8-6z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2 1.4-4.6 2.2-7.7 2.2-6.3 0-11.6-4.2-13.5-10l-7.8 6C6.5 42.6 14.6 48 24 48z"/></svg>
-      Google로 로그인
-    </button>
-    <div id="loginError" style="font-size:11px;color:#E24B4A;display:none;font-family:'DM Sans',sans-serif"></div>
-  `;
-  document.body.appendChild(overlay);
-  document.getElementById('googleLoginBtn').onclick=async()=>{
-    try{
-      const provider=new GoogleAuthProvider();
-      await signInWithPopup(auth,provider);
-    }catch(e){
-      const err=document.getElementById('loginError');
-      if(err){err.textContent='로그인 실패: '+e.message;err.style.display='block';}
-    }
-  };
-}
-
-if(auth){
-  onAuthStateChanged(auth, user=>{
-    if(user){
-      UID=user.uid;
-      const overlay=document.getElementById('loginOverlay');
-      if(overlay)overlay.remove();
-      if(!document.getElementById('logoutBtn')){
-        const btn=document.createElement('button');
-        btn.id='logoutBtn';
-        btn.style.cssText='font-size:10px;color:var(--muted);background:none;border:0.5px solid var(--border);border-radius:6px;padding:3px 8px;cursor:pointer;font-family:DM Sans,sans-serif';
-        btn.textContent='로그아웃';
-        btn.onclick=()=>signOut(auth);
-        document.querySelector('.nav-right').prepend(btn);
-      }
-      init();
-    } else {
-      UID=null;
-      showLoginScreen();
-    }
-  });
-} else {
-  UID='local';
-  const overlay=document.getElementById('loginOverlay');
-  if(overlay)overlay.remove();
-  init();
-}
-
-const DOWS_MON=['월','화','수','목','금','토','일'];
-const DOWS_SUN=['일','월','화','수','목','금','토'];
-const HOURS=['06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23'];
-const HOUR_H=48, START_H=6;
-const WEEK_ROWS=['아침','오전','오후','저녁','밤'];
-
-let habits=[
-  {id:'habit1',name:'운동',color:'#9FE1CB'},
-  {id:'habit2',name:'독서',color:'#80B0E8'},
-  {id:'habit3',name:'물 마시기',color:'#BDD7DE'},
-  {id:'habit4',name:'일기 쓰기',color:'#E9ACBB'},
-];
-let projects=[
-  {name:'프로젝트 1',dot:'#85D4D8',tag:'진행중',note:'',deadline:''},
-  {name:'프로젝트 2',dot:'#E9ACBB',tag:'예정',note:'',deadline:''},
-];
-let milestones=[
-  {date:'',label:'목표 1',color:'#85D4D8'},
-  {date:'',label:'목표 2',color:'#E9ACBB'},
-];
-let TB_CATS=[
-  {id:'work',label:'업무',color:'#80B0E8'},
-  {id:'health',label:'건강',color:'#9FE1CB'},
-  {id:'personal',label:'개인',color:'#E9ACBB'},
-  {id:'study',label:'공부',color:'#FFEDA2'},
-  {id:'rest',label:'휴식',color:'#D3D1C7'},
-];
-
-let tbMode='cat', tbBlocks=[], tbDate=today(), dailyDate=today(), dragging=false, dragStart=null, dragEnd=null, pendingBlock=null, selectedCat=null;
-let weekOffset=0, currentMonth=new Date();
-
-function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
-function fmtDate(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
-function weekKey(dateStr){const d=dateStr?new Date(dateStr+'T00:00:00'):new Date(),jan=new Date(d.getFullYear(),0,1);return d.getFullYear()+'_w'+Math.ceil((((d-jan)/86400000)+jan.getDay()+1)/7);}
-function ls(k){return localStorage.getItem('loom_'+k);}
-function lsSet(k,v){localStorage.setItem('loom_'+k,typeof v==='string'?v:JSON.stringify(v));}
-async function dbSet(path,val){if(db){try{await set(ref(db,UID+'/'+path),val);}catch(e){}}lsSet(path,val);}
-async function dbGet(path){if(db){try{const s=await get(ref(db,UID+'/'+path));return s.exists()?s.val():null;}catch(e){}}const v=ls(path);if(!v)return null;try{return JSON.parse(v);}catch{return v;}}
-function dbListen(path,cb){if(db){onValue(ref(db,UID+'/'+path),s=>cb(s.exists()?s.val():null));return;}const v=ls(path);cb(v?(()=>{try{return JSON.parse(v);}catch{return v;}})():null);}
-
-async function init(){
-  const [h,p,m,tb,tc]=await Promise.all([dbGet('habits'),dbGet('projects'),dbGet('milestones'),dbGet('tb_blocks_'+tbDate),dbGet('tb_cats')]);
-  if(h)habits=h;if(p)projects=p;if(m)milestones=m;if(tb)tbBlocks=tb;if(tc)TB_CATS=tc;
-  // init date picker
-  const dp=document.getElementById('tbDatePicker');
-  dp.value=tbDate;
-  dp.addEventListener('change',e=>{tbDate=e.target.value;loadTBForDate();});
-  const badge=document.getElementById('userBadge');
-  if(badge&&UID!=='jueun')badge.textContent='@'+UID;
-  setDate();renderCountdown();
-  renderHabits();renderCircles();
-  buildTimeline();renderTBLegend();renderTBBlocks();
-  renderFocus();renderTodo();renderProjects();renderWeekly();renderMonthly();renderEPRoadmap();loadGcal();
-  renderFocusAutoItems();
-  initDragSpinDates();
-  dbListen('habits',v=>{if(v){habits=v;renderHabits();renderCircles();}});
-  dbListen('projects',v=>{if(v){projects=v;renderProjects();}});
-  dbListen('milestones',v=>{if(v){milestones=v;renderCountdown();renderMonthly();renderEPRoadmap();renderFocusAutoItems();}});
-  // 날짜별 데이터 실시간 리스닝
-  function listenDailyData(date){
-    if(!db)return;
-    // habit checks
-    habits.forEach(h=>{
-      onValue(ref(db,UID+'/habit_'+h.id+'_'+date),s=>{
-        if(s.exists())lsSet('habit_'+h.id+'_'+date,s.val());
-        if(date===dailyDate){renderHabits();renderCircles();}
-      });
-    });
-    // timeblocks
-    onValue(ref(db,UID+'/tb_blocks_'+date),s=>{
-      if(s.exists()){lsSet('tb_blocks_'+date,JSON.stringify(s.val()));if(date===tbDate){tbBlocks=s.val();renderTBBlocks();}}
-    });
-    // todo
-    onValue(ref(db,UID+'/todo_'+date),s=>{
-      if(s.exists()){
-        lsSet('todo_'+date,JSON.stringify(s.val()));
-        // 포커스가 투두 안에 있으면 재렌더링 안 함
-        const active=document.activeElement;
-        const inTodo=active&&active.closest('#todoList');
-        if(date===dailyDate&&!inTodo)renderTodo();
-      }
-    });
-    // calendar memo
-    onValue(ref(db,UID+'/cal_'+date),s=>{
-      if(s.exists())lsSet('cal_'+date,s.val());
-    });
-  }
-  // 오늘 + 최근 7일 리스닝
-  for(let i=0;i<7;i++){const d=new Date();d.setDate(d.getDate()-i);listenDailyData(fmtDate(d));}
-  // focus (주차별)
-  if(db){
-    onValue(ref(db,UID+'/'+getWkFocusKey()),s=>{
-      if(s.exists()){
-        lsSet(getWkFocusKey(),JSON.stringify(s.val()));
-        const active=document.activeElement;
-        const inFocus=active&&active.closest('#focusList');
-        if(!inFocus)renderFocus();
-      }
-    });
-  }
-  const ms2=new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate()+1)-new Date();
-  setTimeout(()=>{
-    dailyDate=today();tbDate=today();
-    const dp=document.getElementById('tbDatePicker');if(dp)dp.value=tbDate;
-    setDate();renderCountdown();renderHabits();renderCircles();renderTodo();renderFocus();
-  },ms2);
-}
-
-/* ── DRAG-SPIN DATE INPUTS ── */
-function initDragSpinDates(){
-  function getSegmentByX(inp, clientX){
-    const rect=inp.getBoundingClientRect();
-    const w=rect.width;
-    const x=clientX-rect.left;
-    // date input 너비를 3등분: 앞쪽=년, 중간=월, 뒤쪽=일
-    if(x < w*0.4) return 'year';
-    if(x < w*0.65) return 'month';
-    return 'day';
-  }
-  function applySpinToAll(){
-    document.querySelectorAll('input[type=date]').forEach(inp=>{
-      if(inp._spinApplied)return;inp._spinApplied=true;
-      let startY=null,startVal=null,draggingDate=false,segment='day';
-
-      function onMove(e){
-        if(startY===null)return;
-        const dy=startY-e.clientY;
-        if(!draggingDate){
-          if(Math.abs(dy)<12)return;
-          draggingDate=true;
-        }
-        e.preventDefault();
-        const steps=Math.round(dy/12);
-        if(!steps)return;
-        const d=new Date((startVal||today())+'T00:00:00');
-        if(segment==='year') d.setFullYear(d.getFullYear()+steps);
-        else if(segment==='month') d.setMonth(d.getMonth()+steps);
-        else d.setDate(d.getDate()+steps);
-        const nv=fmtDate(d);
-        if(nv!==inp.value){inp.value=nv;inp.dispatchEvent(new Event('change',{bubbles:true}));}
-      }
-      function onUp(){
-        startY=null;startVal=null;draggingDate=false;
-        window.removeEventListener('mousemove',onMove);
-        window.removeEventListener('mouseup',onUp);
-      }
-      inp.addEventListener('mousedown',e=>{
-        segment=getSegmentByX(inp, e.clientX);
-        startY=e.clientY;startVal=inp.value||today();draggingDate=false;
-        window.addEventListener('mousemove',onMove,{passive:false});
-        window.addEventListener('mouseup',onUp);
-      });
-    });
-  }
-  applySpinToAll();
-  new MutationObserver(applySpinToAll).observe(document.body,{childList:true,subtree:true});
-}
-async function loadTBForDate(){
-  const data=await dbGet('tb_blocks_'+tbDate);
-  tbBlocks=data||[];
-  renderTBBlocks();
-}
-// Weekly rows mapped to approximate time slots
-const WEEK_ROW_TIMES={
-  '아침':{sh:7,sm:0,eh:9,em:0},
-  '오전':{sh:9,sm:0,eh:12,em:0},
-  '오후':{sh:13,sm:0,eh:16,em:0},
-  '저녁':{sh:17,sm:0,eh:19,em:0},
-  '밤':{sh:20,sm:0,eh:22,em:0},
-};
-function getWeeklyBlocksForDate(ds){
-  const blocks=[];
-  WEEK_ROWS.forEach(row=>{
-    const v=ls('weekly_'+ds+'_'+row);
-    if(v&&v.trim()){
-      const times=WEEK_ROW_TIMES[row];
-      blocks.push({...times,cat:'__weekly__',name:v.trim(),isWeekly:true});
-    }
-  });
-  return blocks;
-}
-window.setTBDate=offset=>{
-  const d=new Date();d.setDate(d.getDate()+offset);
-  tbDate=fmtDate(d);
-  document.getElementById('tbDatePicker').value=tbDate;
-  loadTBForDate();
-};
-
-function setDate(){
-  const d=new Date();
-  document.getElementById('dateStr').textContent=d.getFullYear()+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+String(d.getDate()).padStart(2,'0')+' '+DOWS_SUN[d.getDay()];
-  renderDailyDateNav();
-}
-function renderDailyDateNav(){
-  const todayStr=today();
-  const d=new Date(dailyDate+'T00:00:00');
-  const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const label=document.getElementById('dailyDateLabel');
-  const sub=document.getElementById('dailyDateSub');
-  if(!label)return;
-  const diff=Math.round((new Date(dailyDate+'T00:00:00')-new Date(todayStr+'T00:00:00'))/(86400000));
-  const relStr=diff===0?'Today':diff===-1?'Yesterday':diff===1?'Tomorrow':'';
-  label.textContent=`${MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
-  sub.textContent=relStr?relStr+' · '+DOWS_SUN[d.getDay()]:DOWS_SUN[d.getDay()];
-}
-window.shiftDailyDate=dir=>{
-  const d=new Date(dailyDate+'T00:00:00');d.setDate(d.getDate()+dir);
-  dailyDate=fmtDate(d);
-  tbDate=dailyDate;
-  const dp=document.getElementById('tbDatePicker');if(dp)dp.value=tbDate;
-  renderDailyDateNav();
-  renderHabits();renderCircles();
-  loadTBForDate();
-  renderTodo();
-  renderFocus();
-};
-window.shiftTBDate=dir=>{
-  const d=new Date(tbDate+'T00:00:00');d.setDate(d.getDate()+dir);
-  tbDate=fmtDate(d);
-  document.getElementById('tbDatePicker').value=tbDate;
-  loadTBForDate();
-};
-
-/* ── COUNTDOWN ── */
-function renderCountdown(){
-  const todayStr=today();
-  function diff(dateStr){
-    if(!dateStr)return 999;
-    const now=new Date(todayStr+'T00:00:00');
-    const t=new Date(dateStr+'T00:00:00');
-    return Math.round((t-now)/86400000);
-  }
-  const grid=document.getElementById('cdGrid');grid.innerHTML='';
-  const colors=['single','ep','ep','single'];
-  const dotColors=['#85D4D8','#A8C4A8','#E8B8A0','#A8C0C8'];
-  milestones.slice().sort((a,b)=>a.date.localeCompare(b.date)).forEach((ms,i)=>{
-    const d=diff(ms.date);
-    const card=document.createElement('div');card.className='cd-card';
-    card.style.cssText=`border:0.5px solid var(--border);border-radius:12px;padding:14px 16px;background:var(--white);position:relative;overflow:hidden`;
-    const bar=document.createElement('div');bar.style.cssText=`position:absolute;top:0;left:0;width:3px;height:100%;background:${ms.color}`;
-    card.appendChild(bar);
-    const numStr=d<0?'Done':d===0?'D-day':'D-'+d;
-    card.innerHTML+=`<div class="cd-title">${ms.label}</div><div class="cd-num" style="color:${d<0?'var(--muted)':d===0?ms.color:'var(--text)'}">${numStr}</div><div class="cd-date">${ms.date}</div>`;
-    grid.appendChild(card);
-  });
-}
-
-/* ── HABITS ── */
-/* ── PASTEL PALETTE ── */
-const PALETTE=['#FFEDA2','#D6D35F','#80B0E8','#4282AA','#BDD7DE','#FFC0C0','#E9ACBB','#8FBC93','#85D4D8','#C5B4E8'];
-function showPalette(anchorEl,currentColor,onPick){
-  document.querySelectorAll('.palette-popup').forEach(e=>e.remove());
-  const pop=document.createElement('div');pop.className='palette-popup';
-  PALETTE.forEach(c=>{
-    const sw=document.createElement('div');sw.className='palette-swatch'+(c===currentColor?' active':'');
-    sw.style.background=c;
-    sw.onclick=e=>{e.stopPropagation();onPick(c);pop.remove();};
-    pop.appendChild(sw);
-  });
-  document.body.appendChild(pop);
-  const rect=anchorEl.getBoundingClientRect();
-  pop.style.position='fixed';
-  pop.style.top=(rect.bottom+4)+'px';
-  pop.style.left=rect.left+'px';
-  setTimeout(()=>document.addEventListener('click',()=>pop.remove(),{once:true}),10);
-}
-
-/* ── HABITS ── */
-function getStreak(id){let s=0,d=new Date();d.setDate(d.getDate()-1);for(let i=0;i<365;i++){if(ls('habit_'+id+'_'+fmtDate(d))==='1'){s++;d.setDate(d.getDate()-1);}else break;}return s;}
-function renderHabits(){
-  const g=document.getElementById('habitList');g.innerHTML='';
-  let dragIdx=null;
-  habits.forEach((h,hi)=>{
-    const done=ls('habit_'+h.id+'_'+dailyDate)==='1',streak=getStreak(h.id);
-    const div=document.createElement('div');div.className='habit-check';
-    div.dataset.idx=hi;
-    div.style.cssText=`display:flex;align-items:center;gap:10px;border:0.5px solid ${done?h.color:'var(--border)'};border-radius:10px;padding:10px 14px;background:${done?h.color+'18':'var(--white)'};transition:border-color .15s;position:relative;cursor:pointer`;
-    // drag handle
-    const handle=document.createElement('div');
-    handle.textContent='⠿';
-    handle.style.cssText='font-size:13px;color:rgba(136,135,128,.25);cursor:grab;flex-shrink:0;opacity:0;transition:opacity .1s;user-select:none';
-    handle.draggable=true;
-    const del=document.createElement('button');
-    del.textContent='✕';
-    del.style.cssText='background:none;border:none;cursor:pointer;font-size:11px;color:var(--muted);opacity:0;padding:0 2px;flex-shrink:0;transition:opacity .15s;line-height:1';
-    div.addEventListener('mouseenter',()=>{handle.style.opacity='1';del.style.opacity='.45';});
-    div.addEventListener('mouseleave',()=>{handle.style.opacity='0';del.style.opacity='0';});
-    handle.addEventListener('mousedown',e=>e.stopPropagation());
-    handle.addEventListener('dragstart',e=>{dragIdx=hi;div.style.opacity='.4';e.dataTransfer.effectAllowed='move';});
-    handle.addEventListener('dragend',()=>{div.style.opacity='1';dragIdx=null;g.querySelectorAll('.habit-check').forEach(r=>r.style.borderTop='');});
-    div.addEventListener('dragover',e=>{e.preventDefault();g.querySelectorAll('.habit-check').forEach(r=>r.style.borderTop='');div.style.borderTop='2px solid var(--mint)';});
-    div.addEventListener('dragleave',()=>{div.style.borderTop='';});
-    div.addEventListener('drop',e=>{
-      e.preventDefault();div.style.borderTop='';
-      if(dragIdx===null||dragIdx===hi)return;
-      const [moved]=habits.splice(dragIdx,1);habits.splice(hi,0,moved);
-      dbSet('habits',habits);renderHabits();renderCircles();
-    });
-    // color dot — 왼쪽 영역
-    const dot=document.createElement('div');
-    dot.style.cssText=`width:12px;height:12px;border-radius:3px;background:${h.color};flex-shrink:0;cursor:pointer`;
-    dot.addEventListener('mousedown',e=>e.stopPropagation());
-    dot.onclick=e=>{e.stopPropagation();showPalette(dot,h.color,c=>{habits[hi].color=c;dbSet('habits',habits);renderHabits();renderCircles();});};
-    // name — contentEditable=false, 왼쪽 클릭시에만 편집 활성화
-    const name=document.createElement('div');
-    name.contentEditable='false';
-    name.style.cssText='flex:1;outline:none;font-size:13px;font-weight:300;font-family:DM Sans,sans-serif;cursor:default;min-width:0;user-select:none';
-    name.textContent=h.name;
-    name.addEventListener('blur',()=>{
-      name.contentEditable='false';name.style.cursor='default';name.style.userSelect='none';
-      habits[hi].name=name.textContent.trim();dbSet('habits',habits);
-    });
-    name.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();name.blur();}});
-    // 글씨 클릭 → 바로 편집
-    name.addEventListener('click',e=>{
-      e.stopPropagation();
-      name.contentEditable='true';name.style.cursor='text';name.style.userSelect='text';
-      name.focus();
-    });
-    name.addEventListener('mousedown',e=>e.stopPropagation());
-    // streak
-    const st=document.createElement('div');st.className='habit-streak';
-    st.textContent=streak>0?streak+'일 연속':'';
-    // 우클릭 컨텍스트 메뉴
-    div.addEventListener('contextmenu',e=>{
-      e.preventDefault();e.stopPropagation();
-      document.querySelectorAll('.habit-ctx').forEach(m=>m.remove());
-      const menu=document.createElement('div');menu.className='habit-ctx';
-      menu.style.cssText=`position:fixed;top:${e.clientY}px;left:${e.clientX}px;background:var(--white);border:0.5px solid var(--border);border-radius:8px;padding:4px;z-index:300;box-shadow:0 4px 14px rgba(0,0,0,.1);min-width:120px`;
-      const editItem=document.createElement('div');
-      editItem.textContent='이름 수정';
-      editItem.style.cssText='padding:7px 12px;font-size:12px;font-weight:300;font-family:DM Sans,sans-serif;cursor:pointer;border-radius:5px;color:var(--text)';
-      editItem.onmouseenter=()=>editItem.style.background='rgba(44,44,42,.06)';
-      editItem.onmouseleave=()=>editItem.style.background='none';
-      editItem.onclick=()=>{
-        menu.remove();
-        name.contentEditable='true';name.style.cursor='text';name.style.userSelect='text';
-        name.focus();document.execCommand('selectAll');
-      };
-      const delItem=document.createElement('div');
-      delItem.textContent='삭제';
-      delItem.style.cssText='padding:7px 12px;font-size:12px;font-weight:300;font-family:DM Sans,sans-serif;cursor:pointer;border-radius:5px;color:#E24B4A';
-      delItem.onmouseenter=()=>delItem.style.background='rgba(226,75,74,.06)';
-      delItem.onmouseleave=()=>delItem.style.background='none';
-      delItem.onclick=()=>{
-        menu.remove();
-        if(habits.length<=1)return;
-        habits.splice(hi,1);dbSet('habits',habits);renderHabits();renderCircles();
-      };
-      menu.appendChild(editItem);menu.appendChild(delItem);
-      document.body.appendChild(menu);
-      setTimeout(()=>document.addEventListener('click',()=>menu.remove(),{once:true}),10);
-    });
-    // check — 오른쪽 절반 클릭
-    const chk=document.createElement('div');chk.className='chk';
-    if(done){chk.style.background=h.color;chk.style.borderColor=h.color;chk.style.color='#fff';chk.textContent='✓';}
-    const doCheck=()=>{dbSet('habit_'+h.id+'_'+dailyDate,done?'0':'1');renderHabits();renderCircles();};
-    div.onclick=e=>{
-      const rect=div.getBoundingClientRect();
-      const x=e.clientX-rect.left;
-      if(x<rect.width*0.5)return;
-      doCheck();
-    };
-    div.addEventListener('touchend',e=>{
-      const rect=div.getBoundingClientRect();
-      const x=e.changedTouches[0].clientX-rect.left;
-      if(x<rect.width*0.4)return;
-      e.preventDefault();
-      doCheck();
-    },{passive:false});
-    div.appendChild(handle);div.appendChild(dot);div.appendChild(name);div.appendChild(st);div.appendChild(chk);
-    g.appendChild(div);
-  });
-  // add button
-  const addBtn=document.createElement('button');
-  addBtn.textContent='+ Add habit';
-  addBtn.style.cssText='width:100%;grid-column:1/-1;border:0.5px dashed var(--border);border-radius:10px;padding:9px;font-size:12px;font-weight:300;font-family:DM Sans,sans-serif;color:var(--muted);background:none;cursor:pointer;transition:border-color .15s,color .15s;margin-top:4px';
-  addBtn.onmouseenter=()=>{addBtn.style.borderColor='var(--mint)';addBtn.style.color='var(--mint-dark)';};
-  addBtn.onmouseleave=()=>{addBtn.style.borderColor='var(--border)';addBtn.style.color='var(--muted)';};
-  addBtn.onclick=()=>{
-    habits.push({id:'h'+Date.now(),name:'New habit',color:'#BDD7DE'});
-    dbSet('habits',habits);renderHabits();renderCircles();
-    setTimeout(()=>{
-      const rows=document.querySelectorAll('#habitList [contenteditable]');
-      if(rows.length){const el=rows[rows.length-1];el.focus();document.execCommand('selectAll');}
-    },40);
-  };
-  g.appendChild(addBtn);
-}
-
-/* ── PIE CIRCLES ── */
-function degToRad(d){return d*Math.PI/180;}
-function pieSlice(cx,cy,r,s,e,color){
-  const x1=cx+r*Math.cos(degToRad(s)),y1=cy+r*Math.sin(degToRad(s));
-  const x2=cx+r*Math.cos(degToRad(e)),y2=cy+r*Math.sin(degToRad(e));
-  return `<path d="M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${e-s>180?1:0},1 ${x2},${y2} Z" fill="${color}"/>`;
-}
-function makePie(done,isToday,isFuture,size=70){
-  const cx=size/2,cy=size/2,r=size/2-1.5,slice=360/Math.max(habits.length,1);
-  const fillA=isFuture?'.02':'.04';
-  const strokeA=isToday?'.25':isFuture?'.05':'.1';
-  const strokeW=isToday?'1.5':'0.5';
-  let paths=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="rgba(44,44,42,${fillA})" stroke="rgba(44,44,42,${strokeA})" stroke-width="${strokeW}"/>`;
-  if(!isFuture) done.forEach(h=>{const idx=habits.findIndex(hab=>hab.id===h.id),s=idx*slice-90,e=s+slice;if(idx>=0)paths+=pieSlice(cx,cy,r,s,e,h.color+'CC');});
-  if(isToday)paths+=`<circle cx="${cx}" cy="${cy}" r="2.5" fill="rgba(44,44,42,.2)"/>`;
-  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">${paths}</svg>`;
-}
-function renderCircles(){
-  const now=new Date();
-  const todayStr=today();
-  const dow=now.getDay();
-  const diffToMon=dow===0?-6:1-dow;
-  const mon=new Date(now);mon.setDate(now.getDate()+diffToMon);
-
-  const wr=document.getElementById('circleRow');wr.innerHTML='';
-  for(let i=0;i<7;i++){
-    const d=new Date(mon);d.setDate(mon.getDate()+i);
-    const ds=fmtDate(d);
-    const isFuture=ds>todayStr;
-    const isToday=ds===todayStr;
-    const done=habits.filter(h=>ls('habit_'+h.id+'_'+ds)==='1');
-    const col=document.createElement('div');col.className='day-col';
-    col.innerHTML=`<div class="day-lbl">${DOWS_MON[i]}</div>${makePie(done,isToday,isFuture,70)}`;
-    wr.appendChild(col);
-  }
-  const leg=document.getElementById('habitLegend');leg.innerHTML='';
-  habits.forEach(h=>{const el=document.createElement('div');el.className='leg';el.innerHTML=`<div class="leg-dot" style="background:${h.color}CC"></div>${h.name}`;leg.appendChild(el);});
-}
-
-/* ── TIMEBLOCK ── */
-function getTBItems(){return tbMode==='cat'?TB_CATS:projects.map(p=>({id:p.name,label:p.name,color:p.dot}));}
-window.setTBMode=m=>{tbMode=m;document.getElementById('modecat').className='mode-btn'+(m==='cat'?' active':'');document.getElementById('modeproj').className='mode-btn'+(m==='proj'?' active':'');renderTBLegend();renderTBBlocks();};
-function getTBColor(block){
-  // 블록에 저장된 cat id로 원래 색상 찾기 (카테고리 or 프로젝트 둘 다 탐색)
-  const cat=TB_CATS.find(c=>c.id===block.cat);
-  if(cat)return{color:cat.color,label:cat.label};
-  const proj=projects.find(p=>p.name===block.cat);
-  if(proj)return{color:proj.dot,label:proj.name};
-  return{color:'#A8C0C8',label:block.cat||'Block'};
-}
-function renderTBLegend(){
-  const leg=document.getElementById('tbLegend');leg.innerHTML='';
-  // section label: categories
-  const catLabel=document.createElement('div');
-  catLabel.style.cssText='font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:2px 0 4px;font-family:DM Sans,sans-serif;width:100%';
-  catLabel.textContent='Category';
-  leg.appendChild(catLabel);
-  const catWrap=document.createElement('div');catWrap.style.cssText='display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px';
-  TB_CATS.forEach((c,ci)=>{
-    const el=makeLegendItem(c,ci,'cat');
-    catWrap.appendChild(el);
-  });
-  const addCatEl=document.createElement('div');
-  addCatEl.style.cssText='display:flex;align-items:center;gap:4px;padding:3px 7px;border:0.5px dashed var(--border);border-radius:20px;cursor:pointer';
-  addCatEl.innerHTML='<span style="font-size:10px;color:var(--muted)">+ Add</span>';
-  addCatEl.onclick=()=>{TB_CATS.push({id:'c'+Date.now(),label:'New',color:'#85D4D8'});dbSet('tb_cats',TB_CATS);renderTBLegend();};
-  catWrap.appendChild(addCatEl);
-  leg.appendChild(catWrap);
-  initLegendDrag(catWrap,'cat');
-  // section label: projects
-  const projLabel=document.createElement('div');
-  projLabel.style.cssText='font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:2px 0 4px;font-family:DM Sans,sans-serif;width:100%';
-  projLabel.textContent='Project';
-  leg.appendChild(projLabel);
-  const projWrap=document.createElement('div');projWrap.style.cssText='display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px';
-  projects.forEach((p,pi)=>{
-    const item={id:p.name,label:p.name,color:p.dot};
-    const el=makeLegendItemProj(item,pi);
-    projWrap.appendChild(el);
-  });
-  leg.appendChild(projWrap);
-  initLegendDrag(projWrap,'proj');
-}
-function makeLegendItem(c,ci,type){
-  const el=document.createElement('div');
-  el.style.cssText='display:flex;align-items:center;gap:5px;padding:3px 7px;border:0.5px solid var(--border);border-radius:20px;background:var(--white);cursor:grab;user-select:none';
-  el.draggable=true;
-  el.dataset.idx=ci;
-  el.dataset.type='cat';
-  const dot=document.createElement('div');
-  dot.style.cssText=`width:10px;height:10px;border-radius:50%;background:${c.color};flex-shrink:0;cursor:pointer`;
-  dot.onclick=e=>{e.stopPropagation();showPalette(dot,c.color,col=>{TB_CATS[ci].color=col;dbSet('tb_cats',TB_CATS);renderTBLegend();renderTBBlocks();});};
-  const label=document.createElement('div');
-  label.contentEditable='true';
-  label.style.cssText='font-size:10px;color:var(--muted);outline:none;cursor:text;font-family:DM Sans,sans-serif;font-weight:300';
-  label.textContent=c.label;
-  label.addEventListener('blur',()=>{TB_CATS[ci].label=label.textContent.trim();dbSet('tb_cats',TB_CATS);});
-  label.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();label.blur();}});
-  label.addEventListener('click',e=>e.stopPropagation());
-  label.addEventListener('mousedown',e=>e.stopPropagation());
-  const del=document.createElement('button');
-  del.style.cssText='background:none;border:none;cursor:pointer;font-size:10px;color:var(--muted);opacity:0;padding:0;margin-left:2px;line-height:1';
-  del.textContent='✕';
-  el.addEventListener('mouseenter',()=>del.style.opacity='.5');
-  el.addEventListener('mouseleave',()=>del.style.opacity='0');
-  del.onclick=e=>{e.stopPropagation();TB_CATS.splice(ci,1);dbSet('tb_cats',TB_CATS);renderTBLegend();renderTBBlocks();};
-  el.appendChild(dot);el.appendChild(label);el.appendChild(del);
-  return el;
-}
-function makeLegendItemProj(item,pi){
-  const el=document.createElement('div');
-  el.style.cssText='display:flex;align-items:center;gap:5px;padding:3px 7px;border:0.5px solid var(--border);border-radius:20px;background:var(--white);cursor:grab;user-select:none';
-  el.draggable=true;
-  el.dataset.idx=pi;
-  el.dataset.type='proj';
-  const dot=document.createElement('div');
-  dot.style.cssText=`width:10px;height:10px;border-radius:50%;background:${item.color};flex-shrink:0;cursor:pointer`;
-  dot.onclick=e=>{e.stopPropagation();showPalette(dot,item.color,col=>{projects[pi].dot=col;dbSet('projects',projects);renderTBLegend();renderTBBlocks();renderProjects();});};
-  const label=document.createElement('div');
-  label.style.cssText='font-size:10px;color:var(--muted);font-family:DM Sans,sans-serif;font-weight:300';
-  label.textContent=item.label;
-  el.appendChild(dot);el.appendChild(label);
-  return el;
-}
-function initLegendDrag(wrap, type){
-  let dragIdx=null;
-  wrap.addEventListener('dragstart',e=>{
-    const row=e.target.closest('[draggable]');if(!row)return;
-    dragIdx=parseInt(row.dataset.idx);row.style.opacity='.4';
-  });
-  wrap.addEventListener('dragover',e=>{
-    e.preventDefault();
-    const row=e.target.closest('[draggable]');if(!row)return;
-    wrap.querySelectorAll('[draggable]').forEach(r=>r.style.outline='');
-    row.style.outline='1.5px solid var(--mint)';
-    row.style.outlineOffset='1px';
-  });
-  wrap.addEventListener('dragleave',()=>{
-    wrap.querySelectorAll('[draggable]').forEach(r=>{r.style.outline='';});
-  });
-  wrap.addEventListener('drop',e=>{
-    e.preventDefault();
-    wrap.querySelectorAll('[draggable]').forEach(r=>{r.style.opacity='1';r.style.outline='';});
-    const row=e.target.closest('[draggable]');if(!row||dragIdx===null)return;
-    const targetIdx=parseInt(row.dataset.idx);
-    if(dragIdx===targetIdx){dragIdx=null;return;}
-    if(type==='cat'){
-      const [moved]=TB_CATS.splice(dragIdx,1);TB_CATS.splice(targetIdx,0,moved);dbSet('tb_cats',TB_CATS);
-    } else {
-      const [moved]=projects.splice(dragIdx,1);projects.splice(targetIdx,0,moved);dbSet('projects',projects);renderProjects();
-    }
-    dragIdx=null;renderTBLegend();renderTBBlocks();
-  });
-  wrap.addEventListener('dragend',()=>{
-    wrap.querySelectorAll('[draggable]').forEach(r=>{r.style.opacity='1';r.style.outline='';});
-    dragIdx=null;
-  });
-}
-function buildTimeline(){
-  const tc=document.getElementById('timeCol'),bc=document.getElementById('blocksCol');
-  tc.innerHTML='';bc.querySelectorAll('.hour-row,.ms-strip').forEach(e=>e.remove());
-  HOURS.forEach(h=>{
-    const tick=document.createElement('div');tick.className='time-tick';tick.textContent=h+':00';tc.appendChild(tick);
-    const row=document.createElement('div');row.className='hour-row';
-    const half=document.createElement('div');half.className='half-line';row.appendChild(half);
-    bc.appendChild(row);
-  });
-  bc.style.height=(HOURS.length*HOUR_H)+'px';
-  // EP milestone strips in today's timeline
-  milestones.forEach(ms=>{
-    if(ms.date===today()){
-      const strip=document.createElement('div');strip.className='ms-strip';
-      strip.style.cssText=`position:absolute;left:0;right:0;top:0;height:2px;background:${ms.color};z-index:3;pointer-events:none`;
-      const lbl=document.createElement('div');lbl.className='ms-strip-label';
-      lbl.style.cssText=`position:absolute;right:6px;top:2px;font-size:9px;padding:1px 5px;border-radius:3px;background:${ms.color}22;color:${ms.color};white-space:nowrap`;
-      lbl.textContent=ms.label;strip.appendChild(lbl);bc.appendChild(strip);
-    }
-  });
-}
-function pxToTime(px){const mins=Math.round((px/HOUR_H)*60/30)*30,tot=START_H*60+mins,h=Math.floor(tot/60),m=tot%60;return{h,m};}
-function snapPx(px){const t=pxToTime(px);return timeToPx(t.h,t.m);}
-function timeToPx(h,m){return((h-START_H)*60+m)/60*HOUR_H;}
-function fmt(h,m){return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');}
-function getRelY(e){const bc=document.getElementById('blocksCol'),rect=bc.getBoundingClientRect(),cy=e.touches?e.touches[0].clientY:e.clientY;return Math.max(0,Math.min(cy-rect.top,HOURS.length*HOUR_H));}
-function renderTBBlocks(){
-  document.querySelectorAll('.tb-block,.tb-weekly-block').forEach(e=>e.remove());
-  const allBlocks=tbBlocks;
-  const weeklyBlocks=getWeeklyBlocksForDate(tbDate);
-  const hasAny=allBlocks.length>0||weeklyBlocks.length>0;
-  document.getElementById('emptyHint').style.display=hasAny?'none':'block';
-  const items=getTBItems();
-
-  // render weekly plan blocks first (behind), hide if overlapping with user block
-  weeklyBlocks.forEach(b=>{
-    const overlaps=allBlocks.some(ub=>{
-      const uStart=ub.sh*60+ub.sm, uEnd=ub.eh*60+ub.em;
-      const wStart=b.sh*60+b.sm, wEnd=b.eh*60+b.em;
-      return uStart<wEnd && uEnd>wStart;
-    });
-    if(overlaps) return;
-    const top=timeToPx(b.sh,b.sm),h=Math.max(timeToPx(b.eh,b.em)-top,24);
-    const div=document.createElement('div');div.className='tb-weekly-block';
-    div.style.cssText=`top:${top}px;height:${h}px;background:rgba(133,212,216,.08);border-left:2px dashed rgba(133,212,216,.5);position:absolute;left:4px;right:4px;border-radius:6px;padding:4px 8px;z-index:1;pointer-events:none`;
-    div.innerHTML=`<div style="font-size:10px;color:var(--mint-dark);opacity:.7;font-weight:300">${b.name}</div><div style="font-size:9px;color:var(--muted);margin-top:2px">${fmt(b.sh,b.sm)}–${fmt(b.eh,b.em)} · weekly</div>`;
-    document.getElementById('blocksCol').appendChild(div);
-  });
-
-  // render user timeblocks on top
-  allBlocks.forEach((b,i)=>{
-    // 카테고리와 프로젝트 둘 다 탐색해서 원래 색상 찾기
-    const cat=TB_CATS.find(c=>c.id===b.cat)
-      ||projects.map(p=>({id:p.name,label:p.name,color:p.dot})).find(c=>c.id===b.cat)
-      ||TB_CATS[0]||{color:'#A8C0C8',label:'Block'};
-    const top=timeToPx(b.sh,b.sm),h=Math.max(timeToPx(b.eh,b.em)-top,24);
-    const div=document.createElement('div');div.className='tb-block';
-    div.style.cssText=`top:${top}px;height:${h}px;background:${cat.color}55;border-left:3px solid ${cat.color};position:absolute;left:4px;right:4px;border-radius:6px;padding:4px 8px;cursor:pointer;z-index:2;overflow:hidden`;
-    div.innerHTML=`
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:4px">
-        <div contenteditable="true" class="tb-inline-name" style="font-size:11px;font-weight:500;color:#5A6070;opacity:.88;outline:none;flex:1;cursor:text;min-width:0" data-idx="${i}">${b.name||cat.label}</div>
-        <button onclick="deleteTBBlock(${i})" style="background:none;border:none;cursor:pointer;font-size:11px;color:#5A6070;opacity:0.4;flex-shrink:0;padding:0;line-height:1" title="Delete">✕</button>
+    <!-- 채널 랭킹 -->
+    <div class="page" id="page-ranking">
+      <div class="filter-bar">
+        <div class="filter-group">
+          <button class="ftab active" data-group="rcat" data-val="10" onclick="setFilter('rcat',this);loadRanking()">🎵 음악</button>
+          <button class="ftab" data-group="rcat" data-val="24" onclick="setFilter('rcat',this);loadRanking()">🌟 연예</button>
+          <button class="ftab" data-group="rcat" data-val="28" onclick="setFilter('rcat',this);loadRanking()">🔬 과학·기술</button>
+          <button class="ftab" data-group="rcat" data-val="22" onclick="setFilter('rcat',this);loadRanking()">👨‍👩‍👧 라이프</button>
+          <button class="ftab" data-group="rcat" data-val="25" onclick="setFilter('rcat',this);loadRanking()">🍜 먹방</button>
+        </div>
+        <div class="filter-divider"></div>
+        <div class="filter-group">
+          <button class="ftab active" data-group="rregion" data-val="KR" onclick="setFilter('rregion',this);loadRanking()">🇰🇷 한국</button>
+          <button class="ftab" data-group="rregion" data-val="JP" onclick="setFilter('rregion',this);loadRanking()">🇯🇵 일본</button>
+          <button class="ftab" data-group="rregion" data-val="US" onclick="setFilter('rregion',this);loadRanking()">🇺🇸 미국</button>
+          <button class="ftab" data-group="rregion" data-val="GB" onclick="setFilter('rregion',this);loadRanking()">🇬🇧 영국</button>
+          <button class="ftab" data-group="rregion" data-val="FR" onclick="setFilter('rregion',this);loadRanking()">🇫🇷 프랑스</button>
+        </div>
+        <div class="result-count" id="rank-count">-</div>
       </div>
-      <div style="font-size:9px;color:#5A6070;opacity:.7;margin-top:2px;font-weight:300">${fmt(b.sh,b.sm)}–${fmt(b.eh,b.em)}</div>
-    `;
-    const nameEl=div.querySelector('.tb-inline-name');
-    nameEl.addEventListener('blur',e=>{
-      tbBlocks[i].name=e.target.textContent.trim();
-      dbSet('tb_blocks_'+tbDate,tbBlocks);
-    });
-    nameEl.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();nameEl.blur();}});
-    nameEl.addEventListener('click',e=>e.stopPropagation());
-    div.addEventListener('dblclick',e=>{e.stopPropagation();deleteTBBlock(i);});
-    document.getElementById('blocksCol').appendChild(div);
-  });
+      <div class="rank-table">
+        <table>
+          <thead><tr>
+            <th>순위</th><th>영상</th><th style="text-align:right">조회수</th><th style="text-align:right">좋아요</th><th></th>
+          </tr></thead>
+          <tbody id="ranking-body"><tr><td colspan="5"><div class="loading"><div class="spinner"></div> 불러오는 중...</div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 황금 채널 발굴기 -->
+    <div class="page" id="page-golden">
+      <div class="section-label">관심 주제</div>
+      <div class="topic-tags" id="topic-tags"></div>
+      <div class="section-label">영상 타입</div>
+      <div class="type-tabs">
+        <button class="type-tab active" data-g="vtype" data-val="short" onclick="setGFilter('vtype',this)">쇼츠</button>
+        <button class="type-tab" data-g="vtype" data-val="long" onclick="setGFilter('vtype',this)">롱폼</button>
+      </div>
+      <div class="sub-filters">
+        <div>
+          <div class="section-label">구독자 구간</div>
+          <div class="sub-group">
+            <button class="sub-tab active" data-g="gsubs" data-val="" onclick="setGFilter('gsubs',this)">전체</button>
+            <button class="sub-tab" data-g="gsubs" data-val="10000" onclick="setGFilter('gsubs',this)">0~1만</button>
+            <button class="sub-tab" data-g="gsubs" data-val="50000" onclick="setGFilter('gsubs',this)">1만~5만</button>
+            <button class="sub-tab" data-g="gsubs" data-val="100000" onclick="setGFilter('gsubs',this)">5만~10만</button>
+          </div>
+        </div>
+        <div>
+          <div class="section-label">정렬 기준</div>
+          <div class="sub-group">
+            <button class="sub-tab active" data-g="gsort" data-val="viewCount" onclick="setGFilter('gsort',this)">조회수 높은 순</button>
+            <button class="sub-tab" data-g="gsort" data-val="date" onclick="setGFilter('gsort',this)">최신순</button>
+          </div>
+        </div>
+      </div>
+      <div class="golden-header" style="margin-top:24px"><div class="golden-count" id="golden-count"></div><div class="golden-update" id="golden-update"></div></div>
+      <div id="golden-results">
+        <div class="empty-state">
+          <div class="empty-icon">👆</div>
+          <div class="empty-title">관심 주제를 선택해 주세요</div>
+          <div class="empty-sub">카테고리를 누르면 유튜브 영상을 즉시 불러와요</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 즐겨찾기 -->
+    <div class="page" id="page-favorites">
+      <div style="margin-top:16px" id="fav-grid"></div>
+    </div>
+
+    <!-- API KEY -->
+    <div class="page" id="page-apikey">
+      <div class="api-card">
+        <h3>🔑 YouTube Data API v3 키 설정</h3>
+        <p>Google Cloud Console에서 발급받은 API 키를 입력해 주세요. 키는 브라우저 로컬에 안전하게 저장됩니다.</p>
+        <div class="api-input-row">
+          <input class="api-input" type="text" id="api-key-input" placeholder="AIzaSy...">
+          <button class="api-save-btn" onclick="saveApiKey()">저장 후 테스트</button>
+        </div>
+        <div class="api-status" id="api-status">
+          <div class="api-dot" id="api-dot"></div>
+          <span id="api-status-text">API 키를 입력하고 저장해 주세요.</span>
+        </div>
+        <div class="api-tip">
+          💡 <strong>API 키 발급 방법:</strong><br>
+          1. <a href="https://console.cloud.google.com" target="_blank">Google Cloud Console</a> 접속 → 새 프로젝트 생성<br>
+          2. API 및 서비스 → 라이브러리 → <strong>YouTube Data API v3</strong> 사용 설정<br>
+          3. 사용자 인증 정보 → API 키 생성 → 복사 후 위에 입력<br>
+          4. 일일 무료 할당량: <strong>10,000 유닛</strong> (검색 1회 = 100유닛)
+        </div>
+      </div>
+    </div>
+
+    <!-- 구독 관리 -->
+    <div class="page" id="page-subs">
+      <div class="empty-state" style="margin-top:40px">
+        <div class="empty-icon">👥</div>
+        <div class="empty-title">구독 중인 채널이 없습니다</div>
+        <div class="empty-sub">영상 카드에서 채널을 구독하면 여기에 표시됩니다</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const S = {
+  page: 'trending',
+  apiKey: localStorage.getItem('yt_api_key') || '',
+  favorites: JSON.parse(localStorage.getItem('yt_favorites') || '[]'),
+  filters: { type:'short', tsort:'hot', cat:'10', tregion:'KR', celebcat:'연예인 추천템 #shorts', tperiod:'3', tminviews:'0', rcat:'10', rregion:'KR', vtype:'short', gsubs:'', gsort:'viewCount' },
+  gTopic: null, gCatId: null,
+};
+
+const TOPICS = [
+  {label:'전체', catId:'0', color:'#6C63FF'},
+  {label:'건강/의학', catId:'26', color:'#10B981'},
+  {label:'영화/드라마 리뷰', catId:'1', color:'#8B5CF6'},
+  {label:'연예인/이슈', catId:'24', color:'#EC4899'},
+  {label:'재테크/부동산', catId:'25', color:'#F59E0B'},
+  {label:'동기부여/명언', catId:'22', color:'#3B82F6'},
+  {label:'AI/IT 꿀팁', catId:'28', color:'#6366F1'},
+  {label:'라이프스타일/Vlog', catId:'22', color:'#14B8A6'},
+  {label:'반려동물', catId:'15', color:'#EF4444'},
+  {label:'뷰티', catId:'26', color:'#F97316'},
+  {label:'요리', catId:'25', color:'#84CC16'},
+  {label:'여행', catId:'19', color:'#06B6D4'},
+];
+
+const PAGE_META = {
+  trending:{title:'🛍 연예인 쇼핑쇼츠 급등',sub:'최근 업로드 + 조회수 폭발 중인 연예인 템 쇼츠'},
+  search:{title:'🔍 셀럽템 쇼츠 검색',sub:'연예인 추천템·명품템 관련 쇼츠를 발굴하세요'},
+  ranking:{title:'📈 채널 랭킹',sub:'카테고리별 인기 영상 순위'},
+  golden:{title:'📊 황금 채널 발굴기',sub:'관심 주제별 숨은 급등 채널 발굴'},
+  favorites:{title:'⭐ 즐겨찾기',sub:'저장한 영상 모아보기'},
+  apikey:{title:'🔑 API 키 설정',sub:'YouTube Data API 키를 등록하세요'},
+  subs:{title:'👥 구독 관리',sub:'구독 중인 채널 관리'},
+};
+
+const BASE = 'https://www.googleapis.com/youtube/v3';
+
+async function ytFetch(ep, params) {
+  if (!S.apiKey) return null;
+  const url = new URL(BASE + ep);
+  url.searchParams.set('key', S.apiKey);
+  Object.entries(params).forEach(([k,v]) => { if(v !== undefined && v !== '') url.searchParams.set(k, v); });
+  try {
+    const r = await fetch(url);
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error?.message || r.statusText);
+    return data;
+  } catch(e) { showToast('API 오류: ' + e.message); return null; }
 }
-window.deleteTBBlock=i=>{tbBlocks.splice(i,1);dbSet('tb_blocks_'+tbDate,tbBlocks);renderTBBlocks();};
-const bc=document.getElementById('blocksCol');
-bc.addEventListener('mousedown',e=>{if(e.target.closest('.tb-block'))return;dragging=true;dragStart=snapPx(getRelY(e));dragEnd=dragStart;showPreview();});
-bc.addEventListener('mousemove',e=>{if(!dragging)return;dragEnd=snapPx(getRelY(e));showPreview();});
-// double-click on empty area cancels pending / clears ghost
-bc.addEventListener('dblclick',e=>{
-  if(e.target.closest('.tb-block'))return;
-  hidePreview();
-  const g=document.querySelector('.tb-ghost');if(g)g.remove();
-  document.getElementById('catPicker').style.display='none';
-  pendingBlock=null;selectedCat=null;dragging=false;
-});
-window.addEventListener('mouseup',e=>{
-  if(!dragging)return;dragging=false;dragEnd=snapPx(getRelY(e));
-  if(Math.abs(dragEnd-dragStart)<(HOUR_H/2-2)){hidePreview();return;}
-  const s=pxToTime(Math.min(dragStart,dragEnd)),en=pxToTime(Math.max(dragStart,dragEnd));
-  pendingBlock={sh:s.h,sm:s.m,eh:en.h,em:en.m};
-  hidePreview();
-  renderDragGhost(pendingBlock);
-  openTBPicker();
-});
-function showPreview(){
-  let p=document.querySelector('.tb-preview');
-  if(!p){
-    p=document.createElement('div');p.className='tb-preview';
-    p.style.cssText='position:absolute;left:4px;right:4px;border-radius:6px;border:1.5px dashed #85D4D8;background:rgba(133,212,216,.08);pointer-events:none;z-index:1;display:flex;flex-direction:column;justify-content:space-between;padding:4px 6px';
-    document.getElementById('blocksCol').appendChild(p);
+
+function fmtNum(n) {
+  n = parseInt(n) || 0;
+  if (n >= 100000000) return (n/100000000).toFixed(1) + '억';
+  if (n >= 10000) return Math.round(n/10000) + '만';
+  if (n >= 1000) return (n/1000).toFixed(1) + '천';
+  return n.toString();
+}
+
+function timeAgo(iso) {
+  const diff = (new Date() - new Date(iso)) / 1000;
+  if (diff < 3600) return Math.floor(diff/60) + '분 전';
+  if (diff < 86400) return Math.floor(diff/3600) + '시간 전';
+  if (diff < 604800) return Math.floor(diff/86400) + '일 전';
+  return Math.floor(diff/604800) + '주 전';
+}
+
+function velEstimate(views, pub) {
+  const hrs = Math.max(1, (Date.now() - new Date(pub)) / 3600000);
+  return '+' + fmtNum(Math.round(parseInt(views||0) / hrs)) + '/h';
+}
+
+function isShort(dur, snippet) {
+  if (snippet) {
+    const t = ((snippet.title||'') + ' ' + (snippet.description||'')).toLowerCase();
+    if (t.includes('#shorts') || t.includes('#short')) return true;
   }
-  const top=Math.min(dragStart,dragEnd),h=Math.max(Math.abs(dragEnd-dragStart),HOUR_H/2);
-  p.style.top=top+'px';p.style.height=h+'px';
-  const s=pxToTime(Math.min(dragStart,dragEnd)),en=pxToTime(Math.max(dragStart,dragEnd));
-  p.innerHTML=`<span style="font-size:10px;color:#4A9EA2;font-weight:400">${fmt(s.h,s.m)}</span><span style="font-size:10px;color:#4A9EA2;text-align:right">${fmt(en.h,en.m)}</span>`;
+  if (!dur) return false;
+  const m = dur.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if (!m) return false;
+  const secs = (+m[1]||0)*3600 + (+m[2]||0)*60 + (+m[3]||0);
+  return secs > 0 && secs <= 180;
 }
-function hidePreview(){const p=document.querySelector('.tb-preview');if(p)p.remove();}
-function renderDragGhost(b){
-  let g=document.querySelector('.tb-ghost');if(g)g.remove();
-  g=document.createElement('div');g.className='tb-ghost';
-  const top=timeToPx(b.sh,b.sm),h=Math.max(timeToPx(b.eh,b.em)-top,24);
-  g.style.cssText=`position:absolute;left:4px;right:4px;top:${top}px;height:${h}px;border-radius:6px;border:1.5px dashed #85D4D8;background:rgba(133,212,216,.12);pointer-events:none;z-index:1;display:flex;flex-direction:column;justify-content:space-between;padding:4px 6px`;
-  g.innerHTML=`<span style="font-size:10px;color:#4A9EA2;font-weight:400">${fmt(b.sh,b.sm)}</span><span style="font-size:10px;color:#4A9EA2">${fmt(b.eh,b.em)}</span>`;
-  document.getElementById('blocksCol').appendChild(g);
-}
-function openTBPicker(){
-  selectedCat=null;const items=getTBItems();
-  document.getElementById('pickerTitle').textContent=tbMode==='cat'?'카테고리 선택':'프로젝트 선택';
-  const tr=document.getElementById('pickerTimeRange');
-  if(tr&&pendingBlock)tr.textContent=fmt(pendingBlock.sh,pendingBlock.sm)+' – '+fmt(pendingBlock.eh,pendingBlock.em);
-  document.getElementById('catGrid').innerHTML=items.map(c=>`<button class="cat-btn" id="cb_${c.id}" onclick="selectTBCat('${c.id}')" style="border-color:${c.color}30"><span style="display:block;width:10px;height:10px;border-radius:3px;background:${c.color};margin:0 auto 4px"></span>${c.label}</button>`).join('');
-  document.getElementById('blockName').value='';
-  document.getElementById('catPicker').style.display='block';
-}
-window.selectTBCat=id=>{
-  selectedCat=id;
-  const items=getTBItems();
-  document.querySelectorAll('.cat-btn').forEach(b=>{
-    b.classList.remove('selected');
-    b.style.borderColor='rgba(44,44,42,.12)';
-    b.style.background='none';
-  });
-  const btn=document.getElementById('cb_'+id);
-  const cat=items.find(c=>c.id===id);
-  if(btn&&cat){btn.classList.add('selected');btn.style.borderColor=cat.color;btn.style.background=cat.color+'22';}
-};
-window.confirmBlock=()=>{
-  if(!selectedCat||!pendingBlock)return;
-  tbBlocks.push({...pendingBlock,cat:selectedCat,name:document.getElementById('blockName').value.trim()});
-  dbSet('tb_blocks_'+tbDate,tbBlocks);renderTBBlocks();
-  document.getElementById('catPicker').style.display='none';
-  const g=document.querySelector('.tb-ghost');if(g)g.remove();
-  pendingBlock=null;selectedCat=null;
-};
-window.cancelBlock=()=>{
-  document.getElementById('catPicker').style.display='none';
-  const g=document.querySelector('.tb-ghost');if(g)g.remove();
-  pendingBlock=null;
-};
 
-/* ── TOGGLE ── */
-function getWeekRange(){
-  const base=dailyDate?new Date(dailyDate+'T00:00:00'):new Date();
-  const dow=base.getDay(),diffToMon=dow===0?-6:1-dow;
-  const mon=new Date(base);mon.setDate(base.getDate()+diffToMon);
-  const sun=new Date(mon);sun.setDate(mon.getDate()+6);
-  // 월 기준 주차 (1일이 속한 주 = 1주차)
-  const firstOfMonth=new Date(base.getFullYear(),base.getMonth(),1);
-  const firstDow=firstOfMonth.getDay()===0?6:firstOfMonth.getDay()-1;
-  const weekOfMonth=Math.ceil((base.getDate()+firstDow)/7);
-  return `${base.getMonth()+1}월 ${weekOfMonth}주차 (${mon.getMonth()+1}/${mon.getDate()} – ${sun.getMonth()+1}/${sun.getDate()})`;
-}
-const toggleState={focus:true,todo:true,tb:true,habits:true};
-window.toggleSection=id=>{
-  toggleState[id]=!toggleState[id];
-  const body=document.getElementById('body-'+id);
-  const arrow=document.getElementById('arrow-'+id);
-  body.classList.toggle('collapsed',!toggleState[id]);
-  arrow.classList.toggle('open',toggleState[id]);
-};
+function randStatus() { return ['new','up','up','keep','keep','down'][Math.floor(Math.random()*6)]; }
 
-/* ── FOCUS (notion style) ── */
-function getWkFocusKey(){return 'focus_notion_'+weekKey(dailyDate);}
-function getFocusItems(){return JSON.parse(ls(getWkFocusKey())||'[]');}
-function saveFocusItems(items){const k=getWkFocusKey();lsSet(k,JSON.stringify(items));dbSet(k,items);}
 
-let focusEditing=false;
-function renderFocus(){
-  if(focusEditing)return;
-  const wk=weekKey(dailyDate);
-  document.getElementById('focusWeekLabel').textContent=getWeekRange();
-  const list=document.getElementById('focusList');
-  list.innerHTML='';
-  const items=getFocusItems();
-  if(items.length===0) items.push({text:'',color:'',bold:false});
-  items.forEach((item,i)=>list.appendChild(makeFocusRow(item,i,items)));
-  initDrag(list,'focus');
-  renderFocusWithAuto();
-}
-function makeFocusRow(item,i,items){
-  const row=document.createElement('div');row.className='notion-row';row.dataset.idx=i;
-  const cell=document.createElement('div');
-  cell.className='notion-cell';cell.contentEditable='true';
-  cell.dataset.placeholder='Write something...';
-  cell.style.color=item.color||'var(--text)';
-  if(item.bold)cell.style.fontWeight='400';
-  cell.innerHTML=item.text||'';
-  cell.addEventListener('focus',()=>{focusEditing=true;});
-  cell.addEventListener('blur',()=>{focusEditing=false;items[i].text=cell.innerHTML;saveFocusItems(items);});
-  let isComposing=false;
-  cell.addEventListener('compositionstart',()=>{isComposing=true;});
-  cell.addEventListener('compositionend',()=>{isComposing=false;items[i].text=cell.innerHTML;saveFocusItems(items);});
-  cell.addEventListener('input',()=>{if(!isComposing){items[i].text=cell.innerHTML;saveFocusItems(items);}});
-  cell.addEventListener('blur',()=>{items[i].text=cell.innerHTML;saveFocusItems(items);});
-  cell.addEventListener('keydown',e=>{
-    if(e.key==='Enter'){
-      e.preventDefault();
-      items.splice(i+1,0,{text:'',color:'',bold:false});
-      saveFocusItems(items);
-      const list=document.getElementById('focusList');
-      const newRow=makeFocusRow({text:'',color:'',bold:false},i+1,items);
-      const rows=list.querySelectorAll('.notion-row');
-      if(rows[i+1])list.insertBefore(newRow,rows[i+1]);
-      else list.insertBefore(newRow,list.querySelector('.small-btn'));
-      setTimeout(()=>newRow.querySelector('.notion-cell')?.focus(),30);
-    }
-    if(e.key==='Backspace'&&cell.innerHTML===''&&items.length>1){
-      e.preventDefault();
-      items.splice(i,1);
-      saveFocusItems(items);
-      renderFocus();
-      setTimeout(()=>{
-        const rows=document.querySelectorAll('#focusList .notion-cell');
-        if(rows[Math.max(0,i-1)])rows[Math.max(0,i-1)].focus();
-      },50);
-    }
-  });
-  const handle=document.createElement('div');handle.className='drag-handle';handle.textContent='⠿';handle.draggable=true;
-  const toolbar=document.createElement('div');toolbar.className='notion-toolbar';
-  toolbar.innerHTML=`
-    <button class="toolbar-btn" onclick="toggleFocusBold(${i})" title="Bold" style="font-weight:500">B</button>
-    <button class="toolbar-btn" onclick="deleteFocusRow(${i})" title="Delete">✕</button>
-  `;
-  row.appendChild(handle);row.appendChild(cell);row.appendChild(toolbar);
-  return row;
-}
-window.setFocusColor=(i,color)=>{const items=getFocusItems();items[i].color=color;saveFocusItems(items);renderFocus();};
-window.toggleFocusBold=i=>{const items=getFocusItems();items[i].bold=!items[i].bold;saveFocusItems(items);renderFocus();};
-window.deleteFocusRow=i=>{const items=getFocusItems();items.splice(i,1);saveFocusItems(items);renderFocus();};
-window.addFocusItem=()=>{const items=getFocusItems();items.push({text:'',color:'',bold:false});saveFocusItems(items);renderFocus();setTimeout(()=>{const rows=document.querySelectorAll('#focusList .notion-cell');if(rows.length)rows[rows.length-1].focus();},30);};
+// 황금채널 전용 카드 (구독자수 + 조회수 + 업로드시간 + 일일조회수)
+function goldenCard(v, rank, chStats) {
+  const vid = typeof v.id === 'object' ? (v.id.videoId||'') : (v.id||'');
+  const title = (v.snippet?.title||'').replace(/'/g,"&#39;");
+  const channel = v.snippet?.channelTitle||'';
+  const thumb = v.snippet?.thumbnails?.medium?.url || v.snippet?.thumbnails?.default?.url || '';
+  const views = parseInt(v.statistics?.viewCount||0);
+  const pub = v.snippet?.publishedAt || '';
+  const dur = v.contentDetails?.duration || '';
+  const short = isShort(dur, v.snippet);
+  const isFav = S.favorites.includes(vid);
 
-/* ── TODO ── */
-function getTodoKey(){return 'todo_'+dailyDate;}
-function getTodos(){return JSON.parse(ls(getTodoKey())||'[]');}
-function saveTodos(t){const k=getTodoKey();lsSet(k,JSON.stringify(t));dbSet(k,t);}
-function renderTodo(){
-  const list=document.getElementById('todoList');list.innerHTML='';
-  const todos=getTodos();
-  todos.forEach((t,i)=>list.appendChild(makeTodoRow(t,i,todos)));
-  initDrag(list,'todo');
-}
-function makeTodoRow(t,i,todos){
-  const row=document.createElement('div');row.className='todo-row';row.dataset.idx=i;
-  const drag=document.createElement('div');drag.className='todo-drag';drag.textContent='⠿';drag.draggable=true;
-  const cb=document.createElement('div');
-  cb.className='todo-cb'+(t.done?' done':'');
-  cb.innerHTML=t.done?'✓':'';
-  cb.onclick=()=>{todos[i].done=!todos[i].done;saveTodos(todos);renderTodo();};
-  const text=document.createElement('div');
-  text.className='todo-text'+(t.done?' done-text':'');
-  text.contentEditable='true';
-  text.innerHTML=t.text||'';
-  let isTodoComposing=false;
-  text.addEventListener('compositionstart',()=>{isTodoComposing=true;});
-  text.addEventListener('compositionend',()=>{isTodoComposing=false;todos[i].text=text.innerHTML;saveTodos(todos);});
-  text.addEventListener('input',()=>{if(!isTodoComposing){todos[i].text=text.innerHTML;saveTodos(todos);}});
-  text.addEventListener('blur',()=>{todos[i].text=text.innerHTML;saveTodos(todos);});
-  text.addEventListener('keydown',e=>{
-    if(e.key==='Enter'){e.preventDefault();todos.splice(i+1,0,{text:'',done:false});saveTodos(todos);renderTodo();setTimeout(()=>{const rows=document.querySelectorAll('#todoList .todo-text');if(rows[i+1])rows[i+1].focus();},30);}
-    if(e.key==='Backspace'&&text.innerHTML===''&&todos.length>1){e.preventDefault();todos.splice(i,1);saveTodos(todos);renderTodo();setTimeout(()=>{const rows=document.querySelectorAll('#todoList .todo-text');if(rows[Math.max(0,i-1)])rows[Math.max(0,i-1)].focus();},30);}
-  });
-  const del=document.createElement('button');del.className='todo-del';del.textContent='✕';
-  del.onclick=()=>{todos.splice(i,1);saveTodos(todos);renderTodo();};
-  row.appendChild(drag);row.appendChild(cb);row.appendChild(text);row.appendChild(del);
-  return row;
-}
-window.addTodo=()=>{const todos=getTodos();todos.push({text:'',done:false});saveTodos(todos);renderTodo();setTimeout(()=>{const rows=document.querySelectorAll('#todoList .todo-text');if(rows.length)rows[rows.length-1].focus();},30);};
+  // 구독자수 (채널 API에서)
+  const subs = chStats ? parseInt(chStats.subscriberCount||0) : 0;
+  // 일일 조회수 = 총조회수 / 업로드 후 일수
+  const daysSince = Math.max(1, (Date.now() - new Date(pub)) / 86400000);
+  const dailyViews = Math.round(views / daysSince);
+  // velocity 퍼센트 (최대 10만/일 기준)
+  const velPct = Math.min(100, Math.round(dailyViews / 1000));
 
-/* ── DRAG TO REORDER ── */
-function initDrag(list,type){
-  let dragIdx=null;
-  list.querySelectorAll('[draggable=true]').forEach(handle=>{
-    const row=handle.closest('.notion-row,.todo-row');
-    if(!row)return;
-    handle.addEventListener('dragstart',e=>{
-      dragIdx=parseInt(row.dataset.idx);
-      row.classList.add('dragging-row');
-      e.dataTransfer.effectAllowed='move';
+  return `<div class="golden-card" onclick="openVideo('${vid}')">
+    <div class="gc-thumb">
+      <div class="gc-thumb-ph">🎬</div>
+      ${thumb ? `<img src="${thumb}" alt="" loading="lazy">` : ''}
+      ${rank ? `<div class="gc-rank">#${rank}</div>` : ''}
+      ${short ? '<div class="gc-shorts">Shorts</div>' : ''}
+      <button class="gc-star" onclick="event.stopPropagation();toggleFav('${vid}',this)">${isFav?'⭐':'☆'}</button>
+    </div>
+    <div class="gc-body">
+      <div class="gc-title">${title}</div>
+      <div class="gc-ch">
+        <div class="gc-ch-dot">${channel[0]||'?'}</div>
+        <div class="gc-ch-name">${channel}</div>
+      </div>
+      <div class="gc-stats">
+        <div class="gc-stat">
+          <div class="gc-stat-label">구독자</div>
+          <div class="gc-stat-val">${subs ? fmtNum(subs)+'명' : '—'}</div>
+        </div>
+        <div class="gc-stat">
+          <div class="gc-stat-label">조회수</div>
+          <div class="gc-stat-val">${fmtNum(views)}회</div>
+        </div>
+        <div class="gc-stat">
+          <div class="gc-stat-label">업로드</div>
+          <div class="gc-stat-val">${timeAgo(pub)}</div>
+        </div>
+      </div>
+      <div class="gc-bottom">
+        <div>
+          <div class="gc-vel">📈 ${fmtNum(dailyViews)}회/일</div>
+          <div class="gc-vel-bar"><div class="gc-vel-fill" style="width:${velPct}%"></div></div>
+        </div>
+        <button class="gc-copy" onclick="event.stopPropagation();copyTitle('${title}')">📋</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function videoCard(v, rank, dur) {
+  const short = isShort(dur, v.snippet);
+  const isFav = S.favorites.includes(v.id);
+  const views = v.statistics?.viewCount || 0;
+  const pub = v.snippet?.publishedAt || '';
+  const vel = pub ? velEstimate(views, pub) : '—';
+  const status = randStatus();
+  const statusLabel = {new:'신규',up:'상승',down:'하락',keep:'유지'}[status];
+  const statusClass = {new:'tag-new',up:'tag-up',down:'tag-down',keep:'tag-keep'}[status];
+  const vid = typeof v.id === 'object' ? (v.id.videoId||'') : (v.id||'');
+  const title = (v.snippet?.title||'').replace(/'/g,"&#39;");
+  const channel = v.snippet?.channelTitle||'';
+  const thumb = v.snippet?.thumbnails?.medium?.url || v.snippet?.thumbnails?.default?.url || '';
+  return `<div class="video-card" onclick="openVideo('${vid}')">
+    <div class="thumb-wrap">
+      <div class="thumb-ph">🎬</div>
+      ${thumb ? `<img src="${thumb}" alt="" loading="lazy">` : ''}
+      ${rank ? `<div class="rank-badge">#${rank}</div>` : ''}
+      ${short ? '<div class="shorts-badge">Shorts</div>' : ''}
+      <span class="status-tag ${statusClass}">${statusLabel}</span>
+      <button class="star-btn" onclick="event.stopPropagation();toggleFav('${vid}',this)">${isFav?'⭐':'☆'}</button>
+    </div>
+    <div class="video-info">
+      <div class="video-title">${title}</div>
+      <div class="video-meta">
+        <div class="ch-avatar">${channel[0]||'?'}</div>
+        <div>
+          <div class="ch-name">${channel}</div>
+          <div class="ch-views">${fmtNum(views)} views · ${timeAgo(pub)}</div>
+        </div>
+      </div>
+      <div class="velocity-row">
+        <div class="velocity">↗ ${vel}</div>
+        <button class="copy-btn" onclick="event.stopPropagation();copyTitle('${title}')">📋</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+async function loadTrending() {
+  const grid = document.getElementById('trending-grid');
+  if (!S.apiKey) { grid.innerHTML = noApiHtml(); return; }
+  grid.innerHTML = loadingHtml();
+
+  const region   = S.filters.tregion || 'KR';
+  const celebQ   = S.filters.celebcat || '연예인 추천템 #shorts';
+  const sortMode = S.filters.tsort || 'hot';
+  const days     = parseInt(S.filters.tperiod || '3');
+  const minViews = parseInt(S.filters.tminviews || '0');
+  const publishedAfter = new Date(Date.now() - days * 86400000).toISOString();
+
+  // 쿼리 2개 병렬 — videoDuration 제거, publishedAfter만 기간 필터로 사용
+  const altQ = celebQ.replace('#shorts', '').trim() + ' 쇼츠';
+  const baseQ = celebQ.replace('#shorts', '').trim();
+
+  const [sr1, sr2, sr3] = await Promise.all([
+    ytFetch('/search', {
+      part:'snippet', q:celebQ, type:'video',
+      order:'viewCount', regionCode:region, relevanceLanguage:'ko',
+      publishedAfter, maxResults:50,
+    }),
+    ytFetch('/search', {
+      part:'snippet', q:altQ, type:'video',
+      order:'viewCount', regionCode:region, relevanceLanguage:'ko',
+      publishedAfter, maxResults:50,
+    }),
+    ytFetch('/search', {
+      part:'snippet', q:baseQ, type:'video',
+      order:'viewCount', regionCode:region, relevanceLanguage:'ko',
+      maxResults:50,  // publishedAfter 없이 — 기간 관계없이 인기 영상도 포함
+    }),
+  ]);
+
+  const seenIds = new Set();
+  const allIds = [];
+  [sr1, sr2, sr3].forEach(data => {
+    (data?.items || []).forEach(item => {
+      const vid = item.id?.videoId;
+      if (vid && !seenIds.has(vid)) { seenIds.add(vid); allIds.push(vid); }
     });
   });
-  list.querySelectorAll('.notion-row,.todo-row').forEach(row=>{
-    row.addEventListener('dragover',e=>{e.preventDefault();list.querySelectorAll('.drag-over-top').forEach(r=>r.classList.remove('drag-over-top'));row.classList.add('drag-over-top');});
-    row.addEventListener('dragleave',()=>row.classList.remove('drag-over-top'));
-    row.addEventListener('drop',e=>{
-      e.preventDefault();row.classList.remove('drag-over-top');
-      const targetIdx=parseInt(row.dataset.idx);
-      if(dragIdx===null||dragIdx===targetIdx)return;
-      if(type==='focus'){
-        const items=getFocusItems();const [moved]=items.splice(dragIdx,1);items.splice(targetIdx,0,moved);saveFocusItems(items);renderFocus();
-      } else {
-        const todos=getTodos();const [moved]=todos.splice(dragIdx,1);todos.splice(targetIdx,0,moved);saveTodos(todos);renderTodo();
-      }
-      dragIdx=null;
+
+  if (!allIds.length) { grid.innerHTML = emptyHtml('해당 조건의 영상이 없습니다'); return; }
+
+  // 통계 한 번에 (최대 50개씩 나눠서)
+  const chunks = [];
+  for (let i = 0; i < allIds.length; i += 50) chunks.push(allIds.slice(i, i+50));
+  const statsResults = await Promise.all(chunks.map(ids =>
+    ytFetch('/videos', { part:'snippet,statistics,contentDetails', id:ids.join(',') })
+  ));
+  const allVideos = statsResults.flatMap(d => d?.items || []);
+
+  // 조회수 필터
+  let items = allVideos.filter(v => parseInt(v.statistics?.viewCount||0) >= minViews);
+
+  // 정렬
+  if (sortMode === 'hot') {
+    // 최근 + 조회수 = 업로드 후 시간당 조회수(velocity) 내림차순
+    items.sort((a,b) => {
+      const velA = parseInt(a.statistics?.viewCount||0) / Math.max(1,(Date.now()-new Date(a.snippet?.publishedAt))/3600000);
+      const velB = parseInt(b.statistics?.viewCount||0) / Math.max(1,(Date.now()-new Date(b.snippet?.publishedAt))/3600000);
+      return velB - velA;
     });
-    row.addEventListener('dragend',()=>{row.classList.remove('dragging-row');list.querySelectorAll('.drag-over-top').forEach(r=>r.classList.remove('drag-over-top'));dragIdx=null;});
-  });
-}
-
-/* ── PROJECTS ── */
-function isThisWeek(dateStr){
-  if(!dateStr)return false;
-  const now=new Date(),dow=now.getDay(),diffToMon=dow===0?-6:1-dow;
-  const mon=new Date(now);mon.setDate(now.getDate()+diffToMon);mon.setHours(0,0,0,0);
-  const sun=new Date(mon);sun.setDate(mon.getDate()+6);sun.setHours(23,59,59,999);
-  const d=new Date(dateStr);return d>=mon&&d<=sun;
-}
-function renderProjects(){
-  // sort by deadline: no deadline goes last
-  projects.sort((a,b)=>{
-    if(!a.deadline&&!b.deadline)return 0;
-    if(!a.deadline)return 1;
-    if(!b.deadline)return -1;
-    return a.deadline.localeCompare(b.deadline);
-  });
-  const list=document.getElementById('projList');list.innerHTML='';
-  projects.forEach((p,i)=>{
-    const div=document.createElement('div');div.className='proj-row';
-    // color dot — palette
-    const dotWrap=document.createElement('div');
-    dotWrap.style.cssText=`width:18px;height:18px;border-radius:50%;background:${p.dot};flex-shrink:0;cursor:pointer`;
-    dotWrap.onclick=e=>{e.stopPropagation();showPalette(dotWrap,p.dot,c=>{projects[i].dot=c;dotWrap.style.background=c;tag.style.background=c+'22';tag.style.color=c;dbSet('projects',projects);renderWeekly();renderMonthly();renderFocusAutoItems();});};
-    // name
-    const name=document.createElement('div');
-    name.contentEditable='true';name.style.cssText='flex:1;outline:none;font-size:13px;font-weight:300;font-family:DM Sans,sans-serif;min-width:0;cursor:text';
-    name.textContent=p.name;
-    name.addEventListener('blur',()=>{projects[i].name=name.textContent.trim();dbSet('projects',projects);renderWeekly();renderMonthly();renderFocusAutoItems();});
-    name.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();name.blur();}});
-    // tag
-    const tag=document.createElement('div');
-    tag.contentEditable='true';
-    tag.style.cssText=`font-size:10px;padding:3px 8px;border-radius:20px;background:${p.dot}22;color:${p.dot};white-space:nowrap;outline:none;cursor:text;min-width:20px`;
-    tag.textContent=p.tag;
-    tag.addEventListener('blur',()=>{projects[i].tag=tag.textContent.trim();dbSet('projects',projects);});
-    tag.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();tag.blur();}});
-    // deadline
-    const dl=document.createElement('input');dl.type='date';dl.value=p.deadline||'';
-    dl.style.cssText='border:none;background:none;font-size:10px;color:var(--text);font-family:DM Sans,sans-serif;font-weight:400;outline:none;cursor:pointer;width:96px;flex-shrink:0';
-    dl.addEventListener('change',e=>{projects[i].deadline=e.target.value;dbSet('projects',projects);renderWeekly();renderMonthly();renderFocusAutoItems();});
-    div.appendChild(dotWrap);div.appendChild(name);div.appendChild(tag);div.appendChild(dl);
-    list.appendChild(div);
-  });
-}
-
-/* ── AUTO ITEMS IN THIS WEEK ── */
-function renderFocusAutoItems(){
-  const autoId='focus_auto_'+weekKey(dailyDate);
-  // collect this-week items: EP milestones + project deadlines
-  const autoItems=[];
-  milestones.forEach(ms=>{if(isThisWeek(ms.date))autoItems.push({text:`★ ${ms.label} (${ms.date})`,color:ms.color,auto:true});});
-  projects.forEach(p=>{if(p.deadline&&isThisWeek(p.deadline))autoItems.push({text:`◎ ${p.name} deadline (${p.deadline})`,color:p.dot,auto:true});});
-  lsSet(autoId,JSON.stringify(autoItems));
-  renderFocusWithAuto();
-}
-function renderFocusWithAuto(){
-  const autoId='focus_auto_'+weekKey(dailyDate);
-  const autoItems=JSON.parse(ls(autoId)||'[]');
-  const list=document.getElementById('focusList');
-  // remove old auto items
-  list.querySelectorAll('.focus-auto-item').forEach(e=>e.remove());
-  if(autoItems.length===0)return;
-  const divider=document.createElement('div');
-  divider.className='focus-auto-item';
-  divider.style.cssText='font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:8px 6px 4px;border-top:0.5px solid var(--border);margin-top:4px';
-  divider.textContent='This week\'s deadlines';
-  list.appendChild(divider);
-  autoItems.forEach(item=>{
-    const row=document.createElement('div');
-    row.className='focus-auto-item';
-    row.style.cssText=`display:flex;align-items:center;gap:8px;padding:4px 6px;border-radius:6px;font-size:12px;font-weight:300;color:${item.color}`;
-    row.innerHTML=`<div style="width:6px;height:6px;border-radius:50%;background:${item.color};flex-shrink:0"></div>${item.text}`;
-    list.appendChild(row);
-  });
-}
-
-/* ── WEEKLY ── */
-function getWeekDays(){
-  const now=new Date(),dow=now.getDay(),diffToMon=dow===0?-6:1-dow;
-  const mon=new Date(now);mon.setDate(now.getDate()+diffToMon+weekOffset*7);
-  const days=[];for(let i=0;i<7;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);days.push(d);}
-  return days;
-}
-function renderWeekly(){
-  const days=getWeekDays();
-  const first=days[0],last=days[6];
-  document.getElementById('weekRange').textContent=`${first.getMonth()+1}/${first.getDate()} – ${last.getMonth()+1}/${last.getDate()}`;
-  const grid=document.getElementById('weekGrid');grid.innerHTML='';
-  const msMap={};milestones.forEach(ms=>{msMap[ms.date]=ms;});
-  const projDlMap={};projects.forEach(p=>{if(p.deadline){if(!projDlMap[p.deadline])projDlMap[p.deadline]=[];projDlMap[p.deadline].push(p);}});
-  const corner=document.createElement('div');corner.className='week-head';grid.appendChild(corner);
-  days.forEach((d,i)=>{
-    const ds=fmtDate(d),isToday=ds===today(),ms=msMap[ds],projs=projDlMap[ds]||[];
-    const div=document.createElement('div');div.className='week-head';
-    let tags=ms?`<div class="week-ms-tag" style="background:${ms.color}22;color:${ms.color}">${ms.label}</div>`:'';
-    projs.forEach(p=>{tags+=`<div class="week-ms-tag" style="background:${p.dot}22;color:${p.dot}">${p.name}</div>`;});
-    div.innerHTML=`<div class="week-dow">${DOWS_MON[i]}</div><div class="week-dnum${isToday?' today':''}">${d.getDate()}</div>${tags}`;
-    grid.appendChild(div);
-  });
-  WEEK_ROWS.forEach(row=>{
-    const lbl=document.createElement('div');lbl.className='week-time-cell';lbl.innerHTML=`<span class="week-time-label">${row}</span>`;grid.appendChild(lbl);
-    days.forEach(d=>{
-      const ds=fmtDate(d),k='weekly_'+ds+'_'+row,saved=ls(k)||'';
-      const cell=document.createElement('div');cell.className='week-cell';
-      cell.innerHTML=`<textarea placeholder="${row}...">${saved}</textarea>`;
-      cell.querySelector('textarea').addEventListener('input',e=>{lsSet(k,e.target.value);dbSet(k,e.target.value);if(ds===tbDate)renderTBBlocks();});
-      grid.appendChild(cell);
-    });
-  });
-}
-window.shiftWeek=dir=>{weekOffset=dir===0?0:weekOffset+dir;renderWeekly();};
-
-/* ── MONTHLY ── */
-function renderMonthly(){
-  const y=currentMonth.getFullYear(),m=currentMonth.getMonth();
-  document.getElementById('calMonthTitle').textContent=y+'년 '+(m+1)+'월';
-  const grid=document.getElementById('calGrid');grid.innerHTML='';
-  ['일','월','화','수','목','금','토'].forEach(d=>{const div=document.createElement('div');div.className='cal-dow';div.textContent=d;grid.appendChild(div);});
-  const firstDay=new Date(y,m,1).getDay(); // 0=일
-  const daysInMonth=new Date(y,m+1,0).getDate(),todayStr=today();
-  const msMap={};milestones.forEach(ms=>{msMap[ms.date]=ms;});
-  const projDlMap={};projects.forEach(p=>{if(p.deadline){if(!projDlMap[p.deadline])projDlMap[p.deadline]=[];projDlMap[p.deadline].push(p);}});
-  const prevDays=new Date(y,m,0).getDate();
-  for(let i=firstDay-1;i>=0;i--){const div=document.createElement('div');div.className='cal-day other';div.innerHTML=`<div class="day-num">${prevDays-i}</div>`;grid.appendChild(div);}
-  for(let d=1;d<=daysInMonth;d++){
-    const ds=y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
-    const isToday=ds===todayStr;
-    const div=document.createElement('div');div.className='cal-day'+(isToday?' today':'');
-    div.innerHTML=`<div class="day-num">${d}</div>`;
-    if(msMap[ds]){const ms=msMap[ds],tag=document.createElement('div');tag.className='day-event';tag.style.background=ms.color+'66';tag.style.color='#5A6070';tag.style.fontWeight='500';tag.style.opacity='.88';tag.textContent=ms.label;div.appendChild(tag);}
-    (projDlMap[ds]||[]).forEach(p=>{const tag=document.createElement('div');tag.className='day-event';tag.style.background=p.dot+'55';tag.style.color='#5A6070';tag.style.fontWeight='500';tag.style.opacity='.88';tag.textContent='⊙ '+p.name;div.appendChild(tag);});
-    const k='cal_'+ds,saved=ls(k)||'';
-    if(saved){const e=document.createElement('div');e.className='day-event';e.style.background='rgba(133,212,216,.15)';e.style.color='var(--mint-dark)';e.style.fontWeight='400';e.textContent=saved;div.appendChild(e);}
-    const tbKey='tb_blocks_'+ds,tbData=ls(tbKey);
-    // 타임블록 있으면 작은 선으로 표시 (dot 제거)
-    
-    // habit dots
-    const habitsDone=habits.filter(h=>ls('habit_'+h.id+'_'+ds)==='1');
-    if(habitsDone.length>0){
-      const dotsWrap=document.createElement('div');
-      dotsWrap.style.cssText='display:flex;gap:3px;margin-top:3px;flex-wrap:wrap';
-      habitsDone.forEach(h=>{
-        const dot=document.createElement('div');
-        dot.style.cssText=`width:6px;height:6px;border-radius:50%;background:${h.color};flex-shrink:0`;
-        dotsWrap.appendChild(dot);
-      });
-      div.appendChild(dotsWrap);
-    }
-    div.addEventListener('click',()=>{
-      dailyDate=ds;tbDate=ds;
-      const dp=document.getElementById('tbDatePicker');if(dp)dp.value=ds;
-      switchTab('daily');
-      renderDailyDateNav();
-      renderHabits();renderCircles();
-      loadTBForDate();
-      renderTodo();
-      // focus week도 해당 주차로 업데이트
-      renderFocus();
-      window.scrollTo(0,0);
-    });
-    grid.appendChild(div);
+  } else if (sortMode === 'viewCount') {
+    items.sort((a,b) => parseInt(b.statistics?.viewCount||0) - parseInt(a.statistics?.viewCount||0));
+  } else {
+    items.sort((a,b) => new Date(b.snippet?.publishedAt) - new Date(a.snippet?.publishedAt));
   }
-  const total=firstDay+daysInMonth,rem=(7-(total%7))%7;
-  for(let i=1;i<=rem;i++){const div=document.createElement('div');div.className='cal-day other';div.innerHTML=`<div class="day-num">${i}</div>`;grid.appendChild(div);}
-}
-window.shiftMonth=dir=>{if(dir===0)currentMonth=new Date();else currentMonth.setMonth(currentMonth.getMonth()+dir);renderMonthly();};
 
-/* ── DAY DETAIL MODAL ── */
-function openDayModal(ds){
-  document.getElementById('dayModalTitle').textContent=ds;
-  const content=document.getElementById('dayModalContent');content.innerHTML='';
-  const msMap={};milestones.forEach(ms=>{msMap[ms.date]=ms;});
-  // milestone
-  if(msMap[ds]){const ms=msMap[ds];const el=document.createElement('div');el.style.cssText=`background:${ms.color}22;color:${ms.color};padding:6px 10px;border-radius:6px;font-size:12px;margin-bottom:10px`;el.textContent='★ '+ms.label;content.appendChild(el);}
-  // memo
-  const memo=ls('cal_'+ds)||'';
-  const memoWrap=document.createElement('div');memoWrap.style.marginBottom='12px';
-  memoWrap.innerHTML=`<div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">메모</div>`;
-  const memoInput=document.createElement('textarea');
-  memoInput.value=memo;memoInput.placeholder='메모 추가...';
-  memoInput.style.cssText='width:100%;border:0.5px solid var(--border);border-radius:7px;padding:8px 10px;font-size:13px;font-weight:300;font-family:DM Sans,sans-serif;background:var(--ivory);color:var(--text);outline:none;resize:none;height:60px;line-height:1.5';
-  memoInput.addEventListener('input',e=>{lsSet('cal_'+ds,e.target.value);dbSet('cal_'+ds,e.target.value);renderMonthly();});
-  memoWrap.appendChild(memoInput);content.appendChild(memoWrap);
-  // timeblocks
-  const tbData=ls('tb_blocks_'+ds);
-  if(tbData){try{
-    const blocks=JSON.parse(tbData);
-    if(blocks.length>0){
-      const tbWrap=document.createElement('div');
-      tbWrap.innerHTML=`<div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">타임 블록</div>`;
-      const allItems=[...TB_CATS,...projects.map(p=>({id:p.name,label:p.name,color:p.dot}))];
-      blocks.forEach(b=>{
-        const cat=allItems.find(c=>c.id===b.cat)||{label:b.cat,color:'#888'};
-        const row=document.createElement('div');row.className='day-block-item';
-        row.innerHTML=`<div class="day-block-bar" style="background:${cat.color}"></div><div style="flex:1"><div style="font-size:13px;font-weight:300">${b.name||cat.label}</div><div style="font-size:10px;color:var(--muted)">${fmt(b.sh,b.sm)}–${fmt(b.eh,b.em)}</div></div>`;
-        tbWrap.appendChild(row);
-      });
-      content.appendChild(tbWrap);
-    }
-  }catch(e){}}
-  // habits
-  const habitsDone=habits.filter(h=>ls('habit_'+h.id+'_'+ds)==='1');
-  if(habitsDone.length>0){
-    const hWrap=document.createElement('div');hWrap.style.marginTop='12px';
-    hWrap.innerHTML=`<div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">완료한 습관</div>`;
-    habitsDone.forEach(h=>{const el=document.createElement('div');el.style.cssText=`display:inline-flex;align-items:center;gap:5px;margin:3px;font-size:11px;padding:3px 8px;border-radius:12px;background:${h.color}22;color:${h.color}`;el.innerHTML=`<span style="width:6px;height:6px;border-radius:50%;background:${h.color};display:inline-block"></span>${h.name}`;hWrap.appendChild(el);});
-    content.appendChild(hWrap);
+  document.getElementById('result-count').textContent = `총 ${items.length}개`;
+  const st = {new:0,up:0,down:0,keep:0};
+  items.forEach(() => { const s=randStatus(); st[s]++; });
+  ['new','up','down','keep'].forEach(k => document.getElementById('cnt-'+k).textContent = st[k]);
+  if (!items.length) { grid.innerHTML = emptyHtml('연예인 쇼핑쇼츠를 찾지 못했습니다'); return; }
+  grid.innerHTML = `<div class="video-grid">${items.map((v,i)=>videoCard(v,i+1,v.contentDetails?.duration)).join('')}</div>`;
+}
+
+// 연예인 쇼핑쇼츠 특화 키워드 확장
+function expandKeywords(q) {
+  const base = q.trim();
+  const queries = new Set();
+
+  // 원본 쿼리 (그냥 + #shorts 붙인 버전 둘 다)
+  queries.add(base);
+  queries.add(base + ' #shorts');
+
+  // 연예인/셀럽/아이돌 키워드 확장
+  if (/연예인|셀럽|스타|배우|가수/.test(base)) {
+    queries.add(base + ' 추천템 #shorts');
+    queries.add(base + ' 명품 #shorts');
+    queries.add(base + ' 쇼핑 하울 #shorts');
+    queries.add(base + ' 착용템 #shorts');
   }
-  document.getElementById('dayModal').classList.add('open');
-}
-window.closeDayModal=()=>document.getElementById('dayModal').classList.remove('open');
-document.getElementById('dayModal').addEventListener('click',e=>{if(e.target===document.getElementById('dayModal'))window.closeDayModal();});
+  if (/아이돌|idol/.test(base)) {
+    queries.add(base + ' 착용 #shorts');
+    queries.add(base + ' 같은템 #shorts');
+    queries.add(base + ' 패션 #shorts');
+  }
+  // 명품/브랜드 확장
+  if (/명품|럭셔리|luxury|샤넬|에르메스|루이비통|구찌|프라다|발렌시아가/.test(base)) {
+    queries.add('연예인 ' + base + ' #shorts');
+    queries.add('셀럽 ' + base + ' 하울 #shorts');
+    queries.add(base + ' 언박싱 #shorts');
+  }
+  // 쇼핑/하울 확장
+  if (/쇼핑|하울|언박싱|템|아이템/.test(base)) {
+    queries.add('연예인 ' + base + ' #shorts');
+    queries.add('아이돌 ' + base + ' #shorts');
+    queries.add(base + ' 추천 #shorts');
+  }
+  // 뷰티/패션 확장
+  if (/뷰티|메이크업|화장|스킨|패션|옷|코디/.test(base)) {
+    queries.add('연예인 ' + base + ' #shorts');
+    queries.add('아이돌 ' + base + ' #shorts');
+    queries.add('셀럽 ' + base + ' 추천 #shorts');
+  }
+  // 아무 매칭 없으면 연예인 prefix 붙여서도 검색
+  if (queries.size <= 2) {
+    queries.add('연예인 ' + base + ' #shorts');
+    queries.add('아이돌 ' + base + ' #shorts');
+    queries.add('셀럽 ' + base + ' 추천 #shorts');
+  }
 
-/* ── EP ROADMAP ── */
-function renderEPRoadmap(){
-  const el=document.getElementById('epRoadmap');el.innerHTML='';
-  const todayStr=today();
-  const sorted=[...milestones].sort((a,b)=>a.date.localeCompare(b.date));
-  sorted.forEach((ms,si)=>{
-    const origIdx=milestones.indexOf(ms);
-    const d=ms.date?Math.round((new Date(ms.date+'T00:00:00')-new Date(todayStr+'T00:00:00'))/86400000):999;
-    const isPast=d<0,isT=d===0,dStr=isPast?'Done':isT?'D-day':'D-'+d;
-    const row=document.createElement('div');row.className='roadmap-row';
-    // color dot — palette
-    const dotWrap=document.createElement('div');
-    dotWrap.style.cssText=`width:12px;height:12px;border-radius:50%;background:${isPast?'var(--border)':ms.color};flex-shrink:0;cursor:pointer`;
-    dotWrap.onclick=e=>{e.stopPropagation();showPalette(dotWrap,ms.color,c=>{milestones[origIdx].color=c;dotWrap.style.background=c;badge.style.color=c;dbSet('milestones',milestones);renderCountdown();renderWeekly();renderMonthly();renderFocusAutoItems();});};
-    // label
-    const label=document.createElement('div');
-    label.contentEditable='true';
-    label.style.cssText=`flex:1;font-size:13px;font-weight:300;color:${isPast?'var(--muted)':'var(--text)'};outline:none;cursor:text`;
-    label.textContent=ms.label;
-    label.addEventListener('blur',()=>{milestones[origIdx].label=label.textContent.trim();dbSet('milestones',milestones);renderCountdown();renderWeekly();renderMonthly();renderFocusAutoItems();});
-    label.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();label.blur();}});
-    // date
-    const dateInput=document.createElement('input');dateInput.type='date';dateInput.value=ms.date;
-    dateInput.style.cssText='border:none;background:none;font-size:10px;color:var(--text);font-family:DM Sans,sans-serif;font-weight:400;outline:none;cursor:pointer;width:110px;flex-shrink:0';
-    dateInput.addEventListener('change',e=>{milestones[origIdx].date=e.target.value;dbSet('milestones',milestones);renderEPRoadmap();renderCountdown();renderWeekly();renderMonthly();renderFocusAutoItems();});
-    // d-day badge
-    const badge=document.createElement('div');
-    badge.style.cssText=`font-size:11px;font-weight:${isPast?300:400};color:${isPast?'var(--muted)':ms.color};flex-shrink:0;min-width:44px;text-align:right`;
-    badge.textContent=dStr;
-    // del btn
-    const del=document.createElement('button');
-    del.style.cssText='background:none;border:none;cursor:pointer;font-size:11px;color:var(--muted);opacity:0;padding:0 2px;flex-shrink:0;transition:opacity .15s';
-    del.textContent='✕';del.title='Delete';
-    del.onclick=()=>{milestones.splice(origIdx,1);dbSet('milestones',milestones);renderEPRoadmap();renderCountdown();renderWeekly();renderMonthly();renderFocusAutoItems();};
-    row.addEventListener('mouseenter',()=>del.style.opacity='.4');
-    row.addEventListener('mouseleave',()=>del.style.opacity='0');
-    row.appendChild(dotWrap);row.appendChild(label);row.appendChild(dateInput);row.appendChild(badge);row.appendChild(del);
-    el.appendChild(row);
+  return [...queries].slice(0, 5);
+}
+
+async function doSearch() {
+  const q = document.getElementById('search-input').value.trim();
+  const el = document.getElementById('search-results');
+  if (!q) { showToast('검색어를 입력해 주세요'); return; }
+  if (!S.apiKey) { el.innerHTML = noApiHtml(); return; }
+
+  el.innerHTML = `<div class="loading"><div class="spinner"></div> 셀럽템 쇼츠 발굴 중...</div>`;
+
+  const dateMap = {
+    today: new Date(Date.now()-86400000).toISOString(),
+    week: new Date(Date.now()-7*86400000).toISOString(),
+    month: new Date(Date.now()-30*86400000).toISOString(),
+    '3month': new Date(Date.now()-90*86400000).toISOString()
+  };
+  const dur = document.getElementById('f-dur').value;
+  const sort = document.getElementById('f-sort').value;
+  const dateVal = dateMap[document.getElementById('f-date').value];
+  const minViews = parseInt(document.getElementById('f-views').value) || 0;
+  const maxSubs = parseInt(document.getElementById('f-maxsubs').value) || 0;
+
+  const queries = expandKeywords(q);
+
+  // #shorts는 쿼리에 포함, videoDuration 제거 (결과 수 극대화)
+  // dur 선택 시 클라이언트에서 필터링
+  const buildQ = kw => kw; // expandKeywords에서 이미 #shorts 붙임
+
+  const searchResults = await Promise.all(queries.map(kw =>
+    ytFetch('/search', {
+      part:'snippet', q:kw, type:'video', order:sort,
+      publishedAfter:dateVal,
+      regionCode:'KR', relevanceLanguage:'ko', maxResults:50,
+    })
+  ));
+
+  // ID 중복 제거하며 합치기
+  const seenIds = new Set();
+  const allIds = [];
+  searchResults.forEach(data => {
+    (data?.items || []).forEach(item => {
+      const vid = item.id?.videoId;
+      if (vid && !seenIds.has(vid)) { seenIds.add(vid); allIds.push(vid); }
+    });
   });
-  // add button
-  const addBtn=document.createElement('button');
-  addBtn.style.cssText='display:block;width:100%;margin-top:8px;border:0.5px dashed var(--border);border-radius:7px;padding:6px;font-size:11px;font-weight:300;font-family:DM Sans,sans-serif;color:var(--muted);background:none;cursor:pointer';
-  addBtn.textContent='+ Add milestone';
-  addBtn.onclick=()=>{milestones.push({date:today(),label:'New milestone',color:'#85D4D8'});dbSet('milestones',milestones);renderEPRoadmap();renderCountdown();renderFocusAutoItems();};
-  el.appendChild(addBtn);
+
+  if (!allIds.length) { el.innerHTML = emptyHtml(`"${q}" 관련 영상을 찾지 못했습니다`); return; }
+
+  // 통계 가져오기 (50개 한번에)
+  const statsData = await ytFetch('/videos', {
+    part:'snippet,statistics,contentDetails', id:allIds.join(',')
+  });
+  if (!statsData) return;
+
+  let items = statsData.items || [];
+
+  // duration 클라이언트 필터 (videoDuration API 파라미터 대신)
+  if (dur === 'short') {
+    items = items.filter(v => isShort(v.contentDetails?.duration, v.snippet));
+  } else if (dur === 'medium') {
+    items = items.filter(v => {
+      const m = (v.contentDetails?.duration||'').match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+      if (!m) return true;
+      const secs = (+m[1]||0)*3600+(+m[2]||0)*60+(+m[3]||0);
+      return secs > 180 && secs <= 1200;
+    });
+  } else if (dur === 'long') {
+    items = items.filter(v => {
+      const m = (v.contentDetails?.duration||'').match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+      if (!m) return true;
+      const secs = (+m[1]||0)*3600+(+m[2]||0)*60+(+m[3]||0);
+      return secs > 1200;
+    });
+  }
+
+  // 조회수 필터
+  items = items.filter(v => parseInt(v.statistics?.viewCount||0) >= minViews);
+
+  // 구독자 필터 (채널 API 필요)
+  let chMapSearch = {};
+  if (maxSubs > 0) {
+    const chIdsF = [...new Set(items.map(v=>v.snippet?.channelId).filter(Boolean))];
+    const chDataF = chIdsF.length ? await ytFetch('/channels',{part:'statistics',id:chIdsF.join(',')}) : null;
+    (chDataF?.items||[]).forEach(ch => { chMapSearch[ch.id] = ch.statistics; });
+    items = items.filter(v => {
+      const subs = parseInt(chMapSearch[v.snippet?.channelId]?.subscriberCount||0);
+      return subs === 0 || subs <= maxSubs;
+    });
+  }
+
+  // 조회수 내림차순 정렬
+  items.sort((a,b) => parseInt(b.statistics?.viewCount||0) - parseInt(a.statistics?.viewCount||0));
+
+  if (!items.length) { el.innerHTML = emptyHtml(`"${q}" 조건에 맞는 영상이 없습니다`); return; }
+
+  // 채널 구독자수 조회 (미리 가져온 것 재활용)
+  const chIds = [...new Set(items.map(v => v.snippet?.channelId).filter(Boolean).filter(id => !chMapSearch[id]))];
+  const chData = chIds.length ? await ytFetch('/channels', { part:'statistics', id:chIds.join(',') }) : null;
+  const chMap = {...chMapSearch};
+  (chData?.items||[]).forEach(ch => { chMap[ch.id] = ch.statistics; });
+
+  const usedQueries = queries.join(' · ');
+  el.innerHTML = `
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+      <span style="font-size:13px;color:var(--muted)">발견된 영상 <strong style="color:var(--text)">${items.length}개</strong></span>
+      <span style="font-size:11px;color:var(--muted);background:#F3F3F8;padding:3px 10px;border-radius:20px">🔍 ${usedQueries}</span>
+    </div>
+    <div class="golden-grid">${items.map((v,i)=>goldenCard(v,i+1,chMap[v.snippet?.channelId])).join('')}</div>`;
 }
 
-/* ── GCAL ── */
-function loadGcal(){const url=ls('gcal_url');if(url){document.getElementById('gcalSection').style.display='block';document.getElementById('gcalFrame').src=url;}}
+async function loadRanking() {
+  const body = document.getElementById('ranking-body');
+  if (!S.apiKey) { body.innerHTML = `<tr><td colspan="5">${noApiHtml()}</td></tr>`; return; }
+  body.innerHTML = `<tr><td colspan="5">${loadingHtml()}</td></tr>`;
+  const data = await ytFetch('/videos', {
+    part:'snippet,statistics', chart:'mostPopular',
+    regionCode:S.filters.rregion, videoCategoryId:S.filters.rcat, maxResults:20, hl:'ko',
+  });
+  if (!data) return;
+  const items = data.items || [];
+  document.getElementById('rank-count').textContent = items.length + '개';
+  const medal = ['🥇','🥈','🥉'];
+  body.innerHTML = items.map((v,i) => {
+    const views = v.statistics?.viewCount || 0;
+    const likes = v.statistics?.likeCount || 0;
+    const thumb = v.snippet?.thumbnails?.default?.url || '';
+    return `<tr onclick="openVideo('${v.id}')">
+      <td class="rank-num ${i===0?'top1':i===1?'top2':i===2?'top3':''}">${medal[i]||i+1}</td>
+      <td><div class="rank-ch">
+        ${thumb ? `<img src="${thumb}" class="rank-avatar" alt="">` : ''}
+        <div>
+          <div class="rank-ch-name">${(v.snippet?.title||'').replace(/</g,'&lt;')}</div>
+          <span class="rank-ch-sub">${v.snippet?.channelTitle||''}</span>
+        </div>
+      </div></td>
+      <td style="text-align:right"><span class="rank-stat">${fmtNum(views)}</span></td>
+      <td style="text-align:right"><span class="rank-stat">👍 ${fmtNum(likes)}</span></td>
+      <td style="text-align:right;color:var(--muted)">›</td>
+    </tr>`;
+  }).join('');
+}
 
-/* ── SETTINGS ── */
-window.openSettings=()=>{
-  document.getElementById('habitEditList').innerHTML=habits.map((h,i)=>`<div class="edit-row"><input class="color-pick" type="color" value="${h.color}" id="hc${i}"><input class="edit-input" value="${h.name}" id="hn${i}"><button class="del-btn" onclick="delHabit(${i})">✕</button></div>`).join('');
-  document.getElementById('projEditList').innerHTML=projects.map((p,i)=>`<div class="edit-row"><input type="color" class="color-pick" value="${p.dot}" id="pd${i}"><input class="edit-input" value="${p.name}" id="pn${i}" style="flex:2"><input class="edit-input" value="${p.tag}" id="pt${i}" style="flex:1"><input class="edit-input" value="${p.note}" id="pno${i}" style="flex:1.5"><button class="del-btn" onclick="delProj(${i})">✕</button></div>`).join('');
-  document.getElementById('msEditList').innerHTML=milestones.map((ms,i)=>`<div class="edit-row"><input type="date" class="edit-input" value="${ms.date}" id="md${i}"><input class="edit-input" value="${ms.label}" id="ml${i}" style="flex:2"><input type="color" class="color-pick" value="${ms.color}" id="mc${i}"><button class="del-btn" onclick="delMs(${i})">✕</button></div>`).join('');
-  document.getElementById('gcalUrlInput').value=ls('gcal_url')||'';
-  document.getElementById('settingsModal').classList.add('open');
-};
-window.closeSettings=()=>document.getElementById('settingsModal').classList.remove('open');
-window.addHabit=()=>{habits.push({id:'h'+Date.now(),name:'New habit',color:'#85D4D8'});window.openSettings();};
-window.delHabit=i=>{habits.splice(i,1);window.openSettings();};
-window.addCat=()=>{TB_CATS.push({id:'c'+Date.now(),label:'New category',color:'#85D4D8'});window.openSettings();};
-window.delCat=i=>{TB_CATS.splice(i,1);window.openSettings();};
-window.addProject=()=>{projects.push({name:'New project',dot:'#85D4D8',tag:'In progress',note:'—'});window.openSettings();};
-window.delProj=i=>{projects.splice(i,1);window.openSettings();};
-window.addMilestone=()=>{milestones.push({date:today(),label:'New milestone',color:'#85D4D8'});window.openSettings();};
-window.delMs=i=>{milestones.splice(i,1);window.openSettings();};
-window.saveSettings=async()=>{
-  habits=habits.map((h,i)=>({...h,color:document.getElementById('hc'+i)?.value||h.color,name:document.getElementById('hn'+i)?.value||h.name}));
-  projects=projects.map((p,i)=>({...p,dot:document.getElementById('pd'+i)?.value||p.dot,name:document.getElementById('pn'+i)?.value||p.name,tag:document.getElementById('pt'+i)?.value||p.tag,note:document.getElementById('pno'+i)?.value||p.note}));
-  milestones=milestones.map((ms,i)=>({date:document.getElementById('md'+i)?.value||ms.date,label:document.getElementById('ml'+i)?.value||ms.label,color:document.getElementById('mc'+i)?.value||ms.color}));
-  const gcalUrl=document.getElementById('gcalUrlInput').value.trim();if(gcalUrl)lsSet('gcal_url',gcalUrl);
-  await Promise.all([dbSet('habits',habits),dbSet('projects',projects),dbSet('milestones',milestones),dbSet('tb_cats',TB_CATS)]);
-  window.closeSettings();
-  renderCountdown();renderHabits();renderCircles();renderProjects();renderWeekly();renderMonthly();renderEPRoadmap();loadGcal();renderTBLegend();buildTimeline();renderTBBlocks();
-};
-window.switchTab=tab=>{
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('page-'+tab).classList.add('active');
-  document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active');
-};
-// init() called by onAuthStateChanged
+function renderTopics() {
+  document.getElementById('topic-tags').innerHTML = TOPICS.map(t =>
+    `<button class="topic-tag ${S.gTopic===t.label?'active':''}" style="${S.gTopic===t.label?'background:'+t.color+';border-color:'+t.color:''}" data-label="${t.label}" data-catid="${t.catId}" data-color="${t.color}" onclick="selectTopic(this)">${t.label}</button>`
+  ).join('');
+}
+
+function setGFilter(g, btn) {
+  document.querySelectorAll('[data-g="'+g+'"]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  S.filters[g] = btn.dataset.val;
+  if (S.gTopic) loadGolden();
+}
+
+function selectTopic(btn) {
+  S.gTopic = btn.dataset.label; S.gCatId = btn.dataset.catid;
+  document.querySelectorAll('.topic-tag').forEach(b => { b.classList.remove('active'); b.style.background=''; b.style.borderColor=''; });
+  btn.classList.add('active'); btn.style.background = btn.dataset.color; btn.style.borderColor = btn.dataset.color;
+  loadGolden();
+}
+
+async function loadGolden() {
+  const el = document.getElementById('golden-results');
+  const countEl = document.getElementById('golden-count');
+  const updateEl = document.getElementById('golden-update');
+  if (!S.apiKey) { el.innerHTML = noApiHtml(); return; }
+  el.innerHTML = loadingHtml();
+
+  const dur = S.filters.vtype;
+  const sortBy = S.filters.gsort;
+  const q = S.gTopic === '전체' ? '인기 쇼츠' : S.gTopic;
+
+  // 검색 쿼리 2개 병렬
+  const params1 = { part:'snippet', type:'video', order:sortBy, videoDuration:dur, regionCode:'KR', relevanceLanguage:'ko', maxResults:50, q };
+  const params2 = { part:'snippet', type:'video', order:'viewCount', videoDuration:dur, regionCode:'KR', relevanceLanguage:'ko', maxResults:50, q };
+  if (S.gCatId && S.gCatId !== '0') { params1.videoCategoryId = S.gCatId; params2.videoCategoryId = S.gCatId; }
+
+  const [sr1, sr2] = await Promise.all([ytFetch('/search', params1), ytFetch('/search', params2)]);
+
+  const seenIds = new Set();
+  const allIds = [];
+  [sr1, sr2].forEach(data => {
+    (data?.items||[]).forEach(item => {
+      const vid = item.id?.videoId;
+      if (vid && !seenIds.has(vid)) { seenIds.add(vid); allIds.push(vid); }
+    });
+  });
+  if (!allIds.length) { el.innerHTML = emptyHtml('해당 주제의 영상이 없습니다'); return; }
+
+  // 영상 통계
+  const statsData = await ytFetch('/videos', { part:'snippet,statistics,contentDetails', id:allIds.join(',') });
+  if (!statsData) return;
+  let items = statsData.items || [];
+
+  // 채널 ID 수집 → 구독자수 조회
+  const channelIds = [...new Set(items.map(v => v.snippet?.channelId).filter(Boolean))];
+  const chData = channelIds.length ? await ytFetch('/channels', {
+    part:'statistics', id:channelIds.join(','), maxResults:50,
+  }) : null;
+  const chMap = {};
+  (chData?.items||[]).forEach(ch => { chMap[ch.id] = ch.statistics; });
+
+  // 구독자 구간 필터
+  const subsFilter = S.filters.gsubs;
+  if (subsFilter) {
+    const max = parseInt(subsFilter);
+    items = items.filter(v => {
+      const subs = parseInt(chMap[v.snippet?.channelId]?.subscriberCount||0);
+      return subs > 0 && subs <= max;
+    });
+  }
+
+  // 정렬: 일일 조회수(velocity) 기준
+  items.sort((a,b) => {
+    const daysA = Math.max(1,(Date.now()-new Date(a.snippet?.publishedAt))/86400000);
+    const daysB = Math.max(1,(Date.now()-new Date(b.snippet?.publishedAt))/86400000);
+    const velA = parseInt(a.statistics?.viewCount||0)/daysA;
+    const velB = parseInt(b.statistics?.viewCount||0)/daysB;
+    return velB - velA;
+  });
+
+  // 자정 갱신 시각 표시
+  const now = new Date();
+  const kstNow = new Date(now.getTime() + 9*3600000);
+  const h = kstNow.getUTCHours(), m = kstNow.getUTCMinutes();
+  const nextMidnight = new Date(kstNow);
+  nextMidnight.setUTCHours(24,0,0,0);
+  const minsLeft = Math.round((nextMidnight - kstNow)/60000);
+  if (updateEl) updateEl.innerHTML = `🕐 마지막 데이터 갱신: 오늘 오전 ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')} (KST) &nbsp;·&nbsp; 다음 갱신까지 ${minsLeft}분`;
+  if (countEl) countEl.textContent = `발견된 영상 ${items.length}개`;
+
+  if (!items.length) { el.innerHTML = emptyHtml('해당 조건의 영상이 없습니다'); return; }
+  el.innerHTML = `<div class="golden-grid">${items.map((v,i)=>goldenCard(v,i+1,chMap[v.snippet?.channelId])).join('')}</div>`;
+}
+
+function toggleFav(id, btn) {
+  if (S.favorites.includes(id)) {
+    S.favorites = S.favorites.filter(f=>f!==id);
+    btn.textContent = '☆'; showToast('즐겨찾기에서 제거했습니다');
+  } else {
+    S.favorites.push(id);
+    btn.textContent = '⭐'; showToast('즐겨찾기에 추가했습니다 ⭐');
+  }
+  localStorage.setItem('yt_favorites', JSON.stringify(S.favorites));
+}
+
+async function renderFavorites() {
+  const el = document.getElementById('fav-grid');
+  if (!S.favorites.length) { el.innerHTML = emptyHtml2('⭐','즐겨찾기한 영상이 없습니다','영상 카드의 ☆ 버튼을 눌러 저장하세요'); return; }
+  if (!S.apiKey) { el.innerHTML = noApiHtml(); return; }
+  el.innerHTML = loadingHtml();
+  const data = await ytFetch('/videos', { part:'snippet,statistics,contentDetails', id:S.favorites.join(',') });
+  if (!data) return;
+  const items = data.items || [];
+  el.innerHTML = `<div class="video-grid">${items.map(v=>videoCard(v,null,v.contentDetails?.duration)).join('')}</div>`;
+}
+
+function renderApiKey() {
+  document.getElementById('api-key-input').value = S.apiKey;
+  const ok = !!S.apiKey;
+  document.getElementById('api-dot').className = 'api-dot ' + (ok?'ok':'err');
+  document.getElementById('api-status-text').textContent = ok ? 'API 키가 등록되어 있습니다.' : 'API 키를 입력하고 저장해 주세요.';
+  document.getElementById('api-banner').classList.toggle('hidden', ok);
+}
+
+async function saveApiKey() {
+  const val = document.getElementById('api-key-input').value.trim();
+  if (!val) { showToast('API 키를 입력해 주세요'); return; }
+  document.getElementById('api-status-text').textContent = '테스트 중...';
+  try {
+    const url = new URL(BASE + '/videos');
+    url.searchParams.set('key', val);
+    url.searchParams.set('part', 'snippet');
+    url.searchParams.set('chart', 'mostPopular');
+    url.searchParams.set('maxResults', '1');
+    const r = await fetch(url);
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error?.message);
+    S.apiKey = val;
+    localStorage.setItem('yt_api_key', val);
+    document.getElementById('api-dot').className = 'api-dot ok';
+    document.getElementById('api-status-text').textContent = '✅ 인증 성공! 실제 데이터를 불러옵니다.';
+    document.getElementById('api-banner').classList.add('hidden');
+    showToast('API 키 저장 완료! 🎉');
+  } catch(e) {
+    document.getElementById('api-dot').className = 'api-dot err';
+    document.getElementById('api-status-text').textContent = '❌ 오류: ' + e.message;
+    showToast('인증 실패: ' + e.message);
+  }
+}
+
+function navigate(page) {
+  S.page = page;
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.toggle('active', el.dataset.page===page));
+  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  const m = PAGE_META[page]||{};
+  document.getElementById('topbar-title').textContent = m.title||'';
+  document.getElementById('topbar-sub').textContent = m.sub||'';
+  loadCurrentPage();
+}
+
+function loadCurrentPage() {
+  if (S.page==='trending') loadTrending();
+  if (S.page==='ranking') loadRanking();
+  if (S.page==='golden') renderTopics();
+  if (S.page==='favorites') renderFavorites();
+  if (S.page==='apikey') renderApiKey();
+}
+
+function setFilter(group, btn) {
+  document.querySelectorAll(`[data-group="${group}"]`).forEach(b => { b.classList.remove('active'); b.classList.remove('active2'); });
+  if (group==='type' && btn.dataset.val==='short') btn.classList.add('active2');
+  else btn.classList.add('active');
+  S.filters[group] = btn.dataset.val;
+}
+
+function openVideo(id) { if(id) window.open('https://www.youtube.com/watch?v='+id,'_blank'); }
+function copyTitle(t) { navigator.clipboard?.writeText(t); showToast('제목이 복사되었습니다 📋'); }
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._timer); t._timer = setTimeout(()=>t.classList.remove('show'), 2500);
+}
+function loadingHtml() { return '<div class="loading"><div class="spinner"></div> 불러오는 중...</div>'; }
+function noApiHtml() { return `<div class="empty-state"><div class="empty-icon">🔑</div><div class="empty-title">API 키가 필요합니다</div><div class="empty-sub" style="margin-top:8px"><button onclick="navigate('apikey')" style="padding:8px 20px;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px">API 키 설정하기</button></div></div>`; }
+function emptyHtml(msg) { return `<div class="empty-state"><div class="empty-icon">😅</div><div class="empty-title">${msg}</div></div>`; }
+function emptyHtml2(icon,title,sub) { return `<div class="empty-state"><div class="empty-icon">${icon}</div><div class="empty-title">${title}</div><div class="empty-sub">${sub}</div></div>`; }
+
+renderApiKey();
+loadTrending();
 </script>
 </body>
 </html>
