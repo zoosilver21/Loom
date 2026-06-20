@@ -16,9 +16,9 @@
   --text:#2C2C2A;--muted:#888780;--border:rgba(44,44,42,0.12);--white:#fff;
 }
 html,body{min-height:100%;background:var(--ivory);color:var(--text);font-family:'DM Sans',sans-serif;font-weight:300}
-.nav{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 0;border-bottom:0.5px solid var(--border);background:var(--ivory);position:sticky;top:0;z-index:100}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 0;border-bottom:0.5px solid var(--border);background:var(--ivory);position:sticky;top:0;z-index:100;position:relative}
 .logo{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:22px}
-.tabs{display:flex}
+.tabs{display:flex;position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap}
 .tab{font-size:11px;font-weight:300;letter-spacing:.08em;padding:8px 11px 12px;border:none;background:none;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-0.5px;transition:color .15s,border-color .15s}
 .tab.active{color:var(--text);border-bottom-color:var(--mint)}
 .nav-right{display:flex;align-items:center;gap:8px}
@@ -192,28 +192,37 @@ html,body{min-height:100%;background:var(--ivory);color:var(--text);font-family:
 }
 /* NOTES */
 .notes-layout{display:flex;height:calc(100vh - 52px);overflow:hidden;margin:-18px}
-.notes-sidebar{width:220px;flex-shrink:0;border-right:0.5px solid var(--border);background:var(--white);display:flex;flex-direction:column;overflow:hidden}
-.notes-sidebar-header{display:flex;align-items:center;justify-content:space-between;padding:16px 14px 10px;border-bottom:0.5px solid var(--border)}
-.notes-new-btn{font-size:11px;color:var(--mint-dark);background:var(--mint-light);border:0.5px solid var(--mint);border-radius:6px;padding:4px 10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:300}
+.notes-sidebar{width:200px;flex-shrink:0;border-right:0.5px solid var(--border);background:var(--white);display:flex;flex-direction:column;overflow:hidden;transition:width .2s ease}
+.notes-sidebar.collapsed{width:0;border-right:none}
+.notes-sidebar-header{display:flex;align-items:center;justify-content:space-between;padding:14px 12px 10px;border-bottom:0.5px solid var(--border);flex-shrink:0}
+.notes-new-btn{font-size:11px;color:var(--mint-dark);background:var(--mint-light);border:0.5px solid var(--mint);border-radius:6px;padding:4px 10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:300;white-space:nowrap}
 .notes-new-btn:hover{background:var(--mint);color:#fff}
-#notesList{overflow-y:auto;flex:1;padding:6px}
+#notesList{overflow-y:auto;flex:1;padding:6px;min-width:188px}
 .note-item{padding:8px 10px;border-radius:8px;cursor:pointer;transition:background .1s;margin-bottom:2px}
 .note-item:hover{background:rgba(44,44,42,.05)}
 .note-item.active{background:var(--mint-light)}
 .note-item-title{font-size:12px;font-weight:400;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .note-item-meta{font-size:10px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:5px}
 .note-item-tag{font-size:9px;padding:1px 5px;border-radius:8px;font-weight:400}
-.notes-editor{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--ivory)}
+.notes-editor{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--ivory);position:relative}
 .notes-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center}
-.notes-editor-header{padding:16px 20px 8px;border-bottom:0.5px solid var(--border);background:var(--white)}
-.notes-title-input{width:100%;border:none;background:none;font-family:'Playfair Display',serif;font-style:italic;font-size:22px;color:var(--text);outline:none;margin-bottom:8px;font-weight:400}
+.notes-editor-header{padding:14px 20px 8px;border-bottom:0.5px solid var(--border);background:var(--white);display:flex;flex-direction:column;gap:6px}
+.notes-editor-top{display:flex;align-items:center;gap:8px}
+.notes-toggle-btn{width:26px;height:26px;border-radius:6px;border:0.5px solid var(--border);background:none;cursor:pointer;font-size:13px;color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.notes-toggle-btn:hover{border-color:var(--mint);color:var(--mint-dark)}
+.notes-title-input{flex:1;border:none;background:none;font-family:'DM Sans',sans-serif;font-size:20px;color:var(--text);outline:none;font-weight:300}
 .notes-title-input::placeholder{color:var(--muted)}
 .notes-link-select{border:0.5px solid var(--border);border-radius:6px;padding:4px 8px;font-size:11px;font-weight:300;font-family:'DM Sans',sans-serif;background:var(--ivory);color:var(--text);outline:none;cursor:pointer;max-width:200px}
-.notes-body{flex:1;padding:20px;overflow-y:auto;font-size:14px;font-weight:300;font-family:'DM Sans',sans-serif;line-height:1.8;color:var(--text);outline:none;min-height:200px}
+.notes-body{flex:1;padding:24px 28px;overflow-y:auto;font-size:14px;font-weight:300;font-family:'DM Sans',sans-serif;line-height:1.9;color:var(--text);outline:none}
 .notes-body:empty::before{content:attr(data-placeholder);color:rgba(136,135,128,.4);pointer-events:none}
+/* floating toggle when sidebar collapsed */
+.notes-float-toggle{position:absolute;top:14px;left:14px;width:26px;height:26px;border-radius:6px;border:0.5px solid var(--border);background:var(--white);cursor:pointer;font-size:13px;color:var(--muted);display:none;align-items:center;justify-content:center;z-index:10;transition:all .15s}
+.notes-float-toggle:hover{border-color:var(--mint);color:var(--mint-dark)}
+.notes-sidebar.collapsed ~ .notes-editor .notes-float-toggle{display:flex}
 @media(max-width:600px){
   .notes-layout{flex-direction:column;height:auto;margin:-10px}
-  .notes-sidebar{width:100%;height:160px;border-right:none;border-bottom:0.5px solid var(--border)}
+  .notes-sidebar{width:100%!important;height:160px;border-right:none;border-bottom:0.5px solid var(--border)}
+  .notes-sidebar.collapsed{height:0;border-bottom:none}
 }
 /* TOGGLE SECTION */
 .toggle-section{margin-bottom:1.4rem}
@@ -435,24 +444,28 @@ html,body{min-height:100%;background:var(--ivory);color:var(--text);font-family:
   <div class="notes-layout">
     <div class="notes-sidebar" id="notesSidebar">
       <div class="notes-sidebar-header">
-        <div class="sec-label" style="margin:0">Notes</div>
-        <button class="notes-new-btn" onclick="createNote()">+ New</button>
+        <div class="sec-label" style="margin:0;white-space:nowrap">Notes</div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <button class="notes-new-btn" onclick="createNote()">+ New</button>
+          <button class="notes-toggle-btn" onclick="toggleNotesSidebar()" title="Hide sidebar">‹</button>
+        </div>
       </div>
       <div id="notesList"></div>
     </div>
     <div class="notes-editor" id="notesEditor">
+      <button class="notes-float-toggle" onclick="toggleNotesSidebar()" title="Show sidebar">›</button>
       <div class="notes-empty" id="notesEmpty">
-        <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:20px;color:var(--muted);margin-bottom:8px">No note selected</div>
-        <div style="font-size:12px;color:var(--muted)">Create a new note or select one</div>
+        <div style="font-family:'DM Sans',sans-serif;font-size:16px;font-weight:300;color:var(--muted);margin-bottom:8px">No note selected</div>
+        <div style="font-size:12px;color:var(--muted)">Create a new note or select one from the sidebar</div>
       </div>
-      <div id="noteContent" style="display:none;height:100%;display:flex;flex-direction:column">
+      <div id="noteContent" style="display:none;flex-direction:column;height:100%">
         <div class="notes-editor-header">
-          <input id="noteTitle" class="notes-title-input" placeholder="Note title..." />
-          <div style="display:flex;align-items:center;gap:8px">
+          <div class="notes-editor-top">
+            <input id="noteTitle" class="notes-title-input" placeholder="Note title..." />
             <select id="noteLinkSelect" class="notes-link-select">
-              <option value="">Link to project/milestone...</option>
+              <option value="">Link...</option>
             </select>
-            <button onclick="deleteCurrentNote()" style="background:none;border:none;cursor:pointer;font-size:13px;color:var(--muted);padding:4px">🗑</button>
+            <button onclick="deleteCurrentNote()" style="background:none;border:none;cursor:pointer;font-size:14px;color:var(--muted);padding:4px;flex-shrink:0">🗑</button>
           </div>
         </div>
         <div id="noteBody" class="notes-body" contenteditable="true" data-placeholder="Start writing..."></div>
@@ -1774,6 +1787,10 @@ function populateLinkSelect(){
   });
   sel.value=cur;
 }
+window.toggleNotesSidebar=()=>{
+  const sidebar=document.getElementById('notesSidebar');
+  sidebar.classList.toggle('collapsed');
+};
 window.createNote=()=>{
   const id='note_'+Date.now();
   const note={id,title:'',body:'',linkedId:'',createdAt:Date.now(),updatedAt:Date.now()};
